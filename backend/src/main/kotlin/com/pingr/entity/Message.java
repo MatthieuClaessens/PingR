@@ -21,7 +21,7 @@ import jakarta.persistence.GenerationType;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idMessage;
+    private Long messageId;
 
     private Long senderId;
 

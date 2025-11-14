@@ -13,10 +13,10 @@ import java.util.Date;
 @Setter
 @Entity
 @Table(name = "friendship")
-public class Friendship {
+public class Relation {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long friendshipId;
+    private Long relationId;
     private Date creationDate;
-    private String friendship_status;
+    private String relationStatus;
 }

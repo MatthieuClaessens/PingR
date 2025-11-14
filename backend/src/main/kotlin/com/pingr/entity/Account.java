@@ -20,13 +20,13 @@ public class Account {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idAccount;
+    private Long accountId;
 
     private String accountName;
     private Integer accountTag;
     private String accountEmail;
     private String accountPassword;
-    private String avatarUrl;
+    private String avatarPath;
 
     @OneToMany(mappedBy = "account")
     private List<Channel> channels;
