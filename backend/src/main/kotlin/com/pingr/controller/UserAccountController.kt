@@ -16,25 +16,25 @@ import org.springframework.web.bind.annotation.RequestParam
 @RestController
 @RequestMapping("/account")
 class UserAccountController (private val userAccountService: UserAccountService) {
-   @PostMapping()
-   fun createAccount(@Valid @RequestBody req: UserAccountDTO) : ResponseEntity<UserAccountDTO> {
-       val created = userAccountService.createAccount(req)
-       return ResponseEntity.ok(created)
-   }
-
-    @GetMapping()
-    fun getAccount(@RequestParam id: Long ) : UserAccountService {
-        val account = userAccountService.getAccountById(accountId)
-        return ResponseEntity.ok(account)
-    }
-
-    @PutMapping()
-    fun editAccount(@RequestParam accountId: Long ) : UserAccountService {
-        val updated = userAccountService.getAccountById(account)
-        return ResponseEntity.ok(account)
-    }
-
-    @DeleteMapping()
-    fun deleteAccount(@RequestParam accountId: (accountId)
-        return ReponseEntity.ok(account)
+//   @PostMapping()
+//   fun createAccount(@Valid @RequestBody req: UserAccountDTO) : ResponseEntity<UserAccountDTO> {
+//       val created = userAccountService.createAccount(req)
+//       return ResponseEntity.ok(created)
+//   }
+//
+//    @GetMapping()
+//    fun getAccount(@RequestParam id: Long ) : UserAccountService {
+//        val account = userAccountService.getAccountById(accountId)
+//        return ResponseEntity.ok(account)
+//    }
+//
+//    @PutMapping()
+//    fun editAccount(@RequestParam accountId: Long ) : UserAccountService {
+//        val updated = userAccountService.getAccountById(account)
+//        return ResponseEntity.ok(account)
+//    }
+//
+//    @DeleteMapping()
+//    fun deleteAccount(@RequestParam accountId: (accountId)
+//        return ReponseEntity.ok(account)
 }
