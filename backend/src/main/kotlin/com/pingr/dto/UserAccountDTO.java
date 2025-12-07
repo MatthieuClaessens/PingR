@@ -1,10 +1,10 @@
 package com.pingr.dto;
 
 import lombok.Data;
-import org.jetbrains.annotations.NotNull;
+import jakarta.validation.constraints.NotNull;
 
 @Data
-public class AccountDTO {
+public class UserAccountDTO {
 
     private Long accountId;
     @NotNull
