@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service
 
 @Service
 class ConversationService(
-    private val channelRepository: ConversationRepository,
+    private val conversationRepository: ConversationRepository,
     private val userAccountRepository: UserAccountRepository
 ) {
 
-    fun createChannel(senderId: Long, receiverId: Long): ConversationDTO {
+    fun createConversation(senderId: Long, receiverId: Long): ConversationDTO {
 
         val sender = userAccountRepository.findById(senderId)
             .orElseThrow { RuntimeException("Sender not found") }
@@ -20,15 +20,15 @@ class ConversationService(
         val receiver = userAccountRepository.findById(receiverId)
             .orElseThrow { RuntimeException("Receiver not found") }
 
-        val existingChannel = sender.channels.firstOrNull { conversation ->
+        val existingConversation = sender.conversations.firstOrNull { conversation ->
             conversation.userAccounts.size == 2 &&
                     conversation.userAccounts.any { it.accountId == receiverId }
         }
-        val channel = existingChannel ?: run {
-            val newChannel = Conversation()
-            newChannel.userAccounts.add(sender)
-            newChannel.userAccounts.add(receiver)
-            channelRepository.save(newConversation)
+        val conversation = existingConversation ?: run {
+            val newConversation = Conversation()
+            newConversation.userAccounts.add(sender)
+            newConversation.userAccounts.add(receiver)
+            conversationRepository.save(newConversation)
         }
 
         return ConversationDTO(conversation.conversationId)
