@@ -21,8 +21,8 @@ public class Message {
     private String messageContent;
 
     @ManyToOne
-    @JoinColumn(name = "channel_id", nullable = false)
-    private Channel channel;
+    @JoinColumn(name = "conversation_id", nullable = false)
+    private Conversation conversation;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

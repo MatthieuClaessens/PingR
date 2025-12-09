@@ -26,10 +26,5 @@ public class UserAccount {
     private String avatarPath;
 
     @ManyToMany
-    @JoinTable(
-            name = "linkedTo",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "channel_id")
-    )
-    private List<Channel> channels = new ArrayList<>();
+    private List<Conversation> conversations = new ArrayList<>();
 }

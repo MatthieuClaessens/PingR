@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Table(name = "channel")
+@Table(name = "conversation")
 @Getter
 @Setter
-public class Channel {
+public class Conversation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false)
-    private Long channelId;
-    private String channelName;
+    private Long conversationId;
 
-    @ManyToMany(mappedBy = "channels") //
+    @ManyToMany(mappedBy = "conversations") //
     private List<UserAccount> userAccounts = new ArrayList<>();
 }

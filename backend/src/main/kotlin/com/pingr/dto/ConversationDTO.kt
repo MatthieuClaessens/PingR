@@ -1,5 +1,5 @@
 package com.pingr.dto
 
-data class ChannelDTO(
+data class ConversationDTO(
     val channelId: Long
 )
