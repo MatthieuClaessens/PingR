@@ -15,7 +15,7 @@ class ConversationService(
     fun createConversation(senderId: Long, receiverId: Long): ConversationDTO {
 
         val sender = userAccountRepository.findById(senderId)
-            .orElseThrow { RuntimeException("Sender not found") }
+            .orElseThrow { RuntimeException("Sender not found") }D
 
         val receiver = userAccountRepository.findById(receiverId)
             .orElseThrow { RuntimeException("Receiver not found") }
