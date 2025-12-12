@@ -1,5 +1,8 @@
 package com.pingr.dto;
 
-public record ConversationDTO(
-Long conversationId
-) {}
+import lombok.Data;
+
+@Data
+public class ConversationDTO {
+    private Long conversationId;
+}

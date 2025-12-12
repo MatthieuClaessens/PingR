@@ -1,10 +1,12 @@
 package com.pingr.dto;
 
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
-public record UserAccountDTO(
-        Long accountId,
-        String accountName,
-        String accountTag,
-        String avatarPath
-) {}
+@Data
+public class UserAccountDTO {
+        private Long accountId;
+        private String accountName;
+        private String accountTag;
+        private String avatarPat;
+}

@@ -16,8 +16,11 @@ import jakarta.persistence.GenerationType;
 public class Message {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(nullable = false)
     private Long messageId;
+    @Column(nullable = false)
     private LocalDateTime messageDate;
+    @Column(nullable = false, length = 2000)
     private String messageContent;
 
     @ManyToOne

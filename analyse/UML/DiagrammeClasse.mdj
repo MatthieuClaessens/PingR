@@ -2657,7 +2657,8 @@
 								"$ref": "AAAAAAGa9bSA6lY3O3E="
 							},
 							"name": "roleId {FK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					]
 				},
@@ -2778,7 +2779,8 @@
 								"$ref": "AAAAAAGa9bk74Fdfa5k="
 							},
 							"name": "conversationId {PK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					]
 				},
@@ -2859,7 +2861,8 @@
 								"$ref": "AAAAAAGa9br7TleRMIc="
 							},
 							"name": "conversationId {FK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -2903,7 +2906,8 @@
 								"$ref": "AAAAAAGbDwjKiTeRH3w="
 							},
 							"name": "accountId {PK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -2912,7 +2916,8 @@
 								"$ref": "AAAAAAGbDwjKiTeRH3w="
 							},
 							"name": "conversationId {PK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					]
 				}
