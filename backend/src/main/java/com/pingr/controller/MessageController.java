@@ -1,4 +1,4 @@
-package com.pingr.controller
+package com.pingr.controller;
 
 public class MessageController {
 }

@@ -41,5 +41,6 @@ public class UserAccount {
             joinColumns = @JoinColumn(name = "account_id"),
             inverseJoinColumns = @JoinColumn(name = "conversation_id")
     )
+
     private List<Conversation> conversations = new ArrayList<>();
 }

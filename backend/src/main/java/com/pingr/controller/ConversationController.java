@@ -15,12 +15,4 @@ import java.net.URI;
 @RequiredArgsConstructor
 public class ConversationController {
 
-    private final ConversationService conversationService;
-
-    @PostMapping
-    public ResponseEntity<ConversationDTO> createConversation() {
-        ConversationDTO dto = conversationService.createConversation();
-        URI location = URI.create("/api/conversation/" + dto.getConversationId());
-        return ResponseEntity.created(location).body(dto);
-    }
 }

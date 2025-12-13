@@ -45,8 +45,12 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-validation</artifactId>
         </dependency>
-
-        <!-- Security (Décommente quand tu seras prêt à coder l'Auth) -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-crypto</artifactId>
+            <version>7.0.0</version>
+        </dependency>
+        <!-- Auth -->
         <!--
         <dependency>
             <groupId>org.springframework.boot</groupId>
