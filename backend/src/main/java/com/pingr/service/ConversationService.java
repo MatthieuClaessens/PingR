@@ -10,9 +10,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
-
 @Service
 @RequiredArgsConstructor
 public class ConversationService {
@@ -21,10 +18,10 @@ public class ConversationService {
     private final UserAccountRepository userAccountRepository;
     private final MessageRepository messageRepository;
 
-    @Transactional // Important pour garantir la cohérence des écritures
-    public ConversationDTO createConversation(Long accountId) {
+    @Transactional
+    public ConversationDTO createConversation(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("UserAccount not found"));
+                .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = new Conversation();
         conversation.getUserAccounts().add(userAccount);
         conversationRepository.save(conversation);
@@ -32,5 +29,22 @@ public class ConversationService {
         ConversationDTO dto = new ConversationDTO();
         dto.setConversationId(conversation.getConversationId());
         return dto;
+    }
+
+    @Transactional
+    public ConversationDTO deleteConversation(Long conversationId, Long accountId) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User account not found"));
+        conversationRepository.deleteById(conversationId);
+        ConversationDTO dto = new ConversationDTO();
+        dto.setConversationId(conversationId);
+        return dto;
+    }
+
+    @Transactional
+    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User account not found"));
+        // return
     }
 }
