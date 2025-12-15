@@ -32,6 +32,14 @@ public class ConversationService {
     }
 
     @Transactional
+    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User account not found"));
+        // return
+    }
+
+    @Transactional
     public ConversationDTO deleteConversation(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User account not found"));
@@ -41,10 +49,5 @@ public class ConversationService {
         return dto;
     }
 
-    @Transactional
-    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("User account not found"));
-        // return
-    }
+
 }
