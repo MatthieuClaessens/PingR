@@ -1,6 +1,7 @@
 package com.pingr.service;
 
 import com.pingr.dto.ConversationDTO;
+import com.pingr.dto.UserAccountDTO;
 import com.pingr.entity.Conversation;
 import com.pingr.entity.UserAccount;
 import com.pingr.repository.ConversationRepository;
@@ -9,6 +10,7 @@ import com.pingr.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -33,10 +35,14 @@ public class ConversationService {
 
     @Transactional
     public ConversationDTO addParticipant(Long conversationId, Long accountId) {
-        Conversation conversation = conversationRepository.findById(conversationId)
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User account not found"));
-        // return
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        conversation.getUserAccounts().add(UserAccount);
+
+        return dto;
+
     }
 
     @Transactional
