@@ -3,6 +3,7 @@ package com.pingr.service;
 import com.pingr.dto.ConversationDTO;
 import com.pingr.dto.UserAccountDTO;
 import com.pingr.entity.Conversation;
+import com.pingr.entity.ConversationType;
 import com.pingr.entity.UserAccount;
 import com.pingr.repository.ConversationRepository;
 import com.pingr.repository.MessageRepository;
@@ -49,13 +50,15 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
-        conversation.getUserAccounts().add(userAccount);
+        if (conversation.getUserAccounts().size > 2) {
+            conversation.setConversationType(ConversationType.GROUP);
+            conversation.getUserAccounts().add(userAccount);
+        }
 
         ConversationDTO dto = new ConversationDTO();
         dto.setConversationId(conversation.getConversationId());
         return dto;
     }
-
 
     @Transactional
     public ConversationDTO kickParticipant(Long conversationId, Long accountId) {

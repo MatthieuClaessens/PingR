@@ -18,6 +18,10 @@ public class Conversation {
     @Column(nullable = false)
     private Long conversationId;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private ConversationType conversationType  = ConversationType.SINGLE;
+
     @ManyToMany(mappedBy = "conversations") //
     private List<UserAccount> userAccounts = new ArrayList<>();
 }
