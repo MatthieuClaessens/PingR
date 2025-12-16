@@ -34,18 +34,6 @@ public class ConversationService {
     }
 
     @Transactional
-    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("User account not found"));
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
-        conversation.getUserAccounts().add(UserAccount);
-
-        return dto;
-
-    }
-
-    @Transactional
     public ConversationDTO deleteConversation(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User account not found"));
@@ -55,5 +43,29 @@ public class ConversationService {
         return dto;
     }
 
+    @Transactional
+    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User account not found"));
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        conversation.getUserAccounts().add(userAccount);
 
+        ConversationDTO dto = new ConversationDTO();
+        dto.setConversationId(conversation.getConversationId());
+        return dto;
+    }
+
+
+    @Transactional
+    public ConversationDTO kickParticipant(Long conversationId, Long accountId) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new RuntimeException("User account not found"));
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        conversation.getUserAccounts().remove(userAccount);
+
+        ConversationDTO dto = new ConversationDTO();
+        return dto;
+    }
 }
