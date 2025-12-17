@@ -1,7 +1,6 @@
 package com.pingr.service;
 
 import com.pingr.dto.ConversationDTO;
-import com.pingr.dto.UserAccountDTO;
 import com.pingr.entity.Conversation;
 import com.pingr.entity.ConversationType;
 import com.pingr.entity.UserAccount;
@@ -11,7 +10,7 @@ import com.pingr.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import java.util.Optional;
+
 
 @Service
 @RequiredArgsConstructor
@@ -50,7 +49,7 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
-        if (conversation.getUserAccounts().size > 2) {
+        if (conversation.getUserAccounts().size() > 2) {
             conversation.setConversationType(ConversationType.GROUP);
             conversation.getUserAccounts().add(userAccount);
         }
