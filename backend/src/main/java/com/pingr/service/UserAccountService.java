@@ -31,29 +31,45 @@ public class UserAccountService {
         return userAccountRepository.findAll(pageable);
     }
 
+/**
+ * Creates a new user account with the provided details.
+ * This method is transactional to ensure data consistency.
+ *
+ * @param accountName The name for the new account
+ * @param accountTag The tag for the new account
+ * @param accountEmail The email address for the new account
+ * @param password The password for the new account (will be encoded)
+ * @param avatarPath The path to the avatar image
+ * @return UserAccountDTO representing the newly created user account
+ */
 @Transactional
     public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
+    // Create a new UserAccount entity
     UserAccount user = new UserAccount();
+    // Set the provided account details
     user.setAccountName(accountName);
     user.setAccountTag(accountTag);
     user.setAccountEmail(accountEmail);
-    user.setAccountPassword(passwordEncoder.encode(password));
+    user.setAccountPassword(passwordEncoder.encode(password)); // Encode the password for security
     user.setAvatarPath(avatarPath);
-    user.setRole(Role.USER);
+    user.setRole(Role.USER); // Set default role as USER
 
+    // Save the user account to the database
     UserAccount saved = userAccountRepository.save(user);
 
+    // Convert the saved entity to DTO and return
     return UserAccountMapper.toDTO(saved);
     }
 
     @Transactional
-    public UserAccount getUserAccountById(Long accountId) {
-        return userAccountRepository.findById(accountId)
+    public UserAccountDTO getUserAccountById(Long accountId) {
+    UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur introuvable" + accountId));
+    return UserAccountMapper.toDTO(existing);
     }
 
     @Transactional
-    public UserAccount editUserAccount(Long accountId, UserAccount userAccount) {
+    public UserAccountDTO editUserAccount(Long accountId, UserAccount userAccount) {
         UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur Introuvable" + accountId));
         if (userAccount.getAccountName() != null) {
