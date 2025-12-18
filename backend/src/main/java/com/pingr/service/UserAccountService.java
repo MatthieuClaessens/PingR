@@ -22,12 +22,10 @@ public class UserAccountService {
     private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
 
-    // Retourne tous les users sans pagination
     public List<UserAccount> getAllUsers() {
         return userAccountRepository.findAll();
     }
 
-    // Retourne les users avec pagination
     public Page<UserAccount> getAllUsers(Pageable pageable) {
         return userAccountRepository.findAll(pageable);
     }
@@ -66,7 +64,7 @@ public class UserAccountService {
         if (userAccount.getAccountEmail() != null) {
             String newAccountEmail = userAccount.getAccountEmail().trim().toLowerCase();
             userAccountRepository.findByAccountEmail(newAccountEmail)
-                    .filter(u -> !u.getUserAccountId().equals(accountId))
+                    .filter(u -> !u.getAccountId().equals(accountId))
                     .ifPresent(u -> {
                         throw new IllegalArgumentException("Adresse mail déjà utilisée");});
             existing.setAccountEmail(newAccountEmail);
@@ -77,7 +75,7 @@ public class UserAccountService {
         if (userAccount.getAvatarPath() != null) {
             existing.setAvatarPath(userAccount.getAvatarPath());
         }
-
+        return userAccountRepository.save(existing);
     }
 
 
