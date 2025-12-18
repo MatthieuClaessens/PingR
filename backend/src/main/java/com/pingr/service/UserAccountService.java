@@ -21,6 +21,7 @@ public class UserAccountService {
 
     private final UserAccountRepository userAccountRepository;
     private final PasswordEncoder passwordEncoder;
+    private final UserAccountMapper userAccountMapper;
 
     public List<UserAccount> getAllUsers() {
         return userAccountRepository.findAll();
@@ -31,7 +32,7 @@ public class UserAccountService {
     }
 
 @Transactional
-    public UserAccountDTO createUser(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
+    public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
     UserAccount user = new UserAccount();
     user.setAccountName(accountName);
     user.setAccountTag(accountTag);
@@ -46,13 +47,13 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccount getAccountById(Long accountId) {
+    public UserAccount getUserAccountById(Long accountId) {
         return userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur introuvable" + accountId));
     }
 
     @Transactional
-    public UserAccount editAccount(Long accountId, UserAccount userAccount) {
+    public UserAccount editUserAccount(Long accountId, UserAccount userAccount) {
         UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException("Utilisateur Introuvable" + accountId));
         if (userAccount.getAccountName() != null) {
@@ -75,12 +76,13 @@ public class UserAccountService {
         if (userAccount.getAvatarPath() != null) {
             existing.setAvatarPath(userAccount.getAvatarPath());
         }
-        return userAccountRepository.save(existing);
+        UserAccount saved = userAccountRepository.save(existing);
+        return UserAccountMapper.toDTO(saved);
     }
 
 
     @Transactional
-    public void deleteUser(Long accountId) {
+    public void deleteUserAccount(Long accountId) {
         if (!userAccountRepository.existsById(accountId)) {
             throw new EntityNotFoundException("Utilisateur Introuvable");
         }
