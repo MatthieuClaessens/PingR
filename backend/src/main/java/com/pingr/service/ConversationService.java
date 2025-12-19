@@ -4,6 +4,7 @@ import com.pingr.dto.ConversationDTO;
 import com.pingr.entity.Conversation;
 import com.pingr.entity.ConversationType;
 import com.pingr.entity.UserAccount;
+import com.pingr.mapper.ConversationMapper;
 import com.pingr.repository.ConversationRepository;
 import com.pingr.repository.MessageRepository;
 import com.pingr.repository.UserAccountRepository;
@@ -21,16 +22,13 @@ public class ConversationService {
     private final MessageRepository messageRepository;
 
     @Transactional
-    public ConversationDTO createConversation(Long conversationId, Long accountId) {
+    public ConversationDTO createConversation(Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = new Conversation();
         conversation.getUserAccounts().add(userAccount);
-        conversationRepository.save(conversation);
-
-        ConversationDTO dto = new ConversationDTO();
-        dto.setConversationId(conversation.getConversationId());
-        return dto;
+        Conversation saved = conversationRepository.save(conversation);
+        return ConversationMapper.toDTO(saved);
     }
 
     @Transactional

@@ -31,17 +31,6 @@ public class UserAccountService {
         return userAccountRepository.findAll(pageable);
     }
 
-/**
- * Creates a new user account with the provided details.
- * This method is transactional to ensure data consistency.
- *
- * @param accountName The name for the new account
- * @param accountTag The tag for the new account
- * @param accountEmail The email address for the new account
- * @param password The password for the new account (will be encoded)
- * @param avatarPath The path to the avatar image
- * @return UserAccountDTO representing the newly created user account
- */
 @Transactional
     public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
     // Create a new UserAccount entity
