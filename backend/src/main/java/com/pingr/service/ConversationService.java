@@ -32,13 +32,15 @@ public class ConversationService {
     }
 
     @Transactional
-    public ConversationDTO deleteConversation(Long conversationId, Long accountId) {
+    public void deleteConversation(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User account not found"));
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+
         conversationRepository.deleteById(conversationId);
-        ConversationDTO dto = new ConversationDTO();
-        dto.setConversationId(conversationId);
-        return dto;
+
+
     }
 
     @Transactional
@@ -49,7 +51,9 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
         if (conversation.getUserAccounts().size() > 2) {
             conversation.setConversationType(ConversationType.GROUP);
-            conversation.getUserAccounts().add(userAccount);
+            if (conversation.getUserAccounts().size() < 10) {
+                conversation.getUserAccounts().add(userAccount);
+            }
         }
 
         ConversationDTO dto = new ConversationDTO();
