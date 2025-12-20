@@ -33,20 +33,16 @@ public class UserAccountService {
 
 @Transactional
     public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
-    // Create a new UserAccount entity
     UserAccount user = new UserAccount();
-    // Set the provided account details
     user.setAccountName(accountName);
     user.setAccountTag(accountTag);
     user.setAccountEmail(accountEmail);
-    user.setAccountPassword(passwordEncoder.encode(password)); // Encode the password for security
+    user.setAccountPassword(passwordEncoder.encode(password));
     user.setAvatarPath(avatarPath);
-    user.setRole(Role.USER); // Set default role as USER
+    user.setRole(Role.USER);
 
-    // Save the user account to the database
     UserAccount saved = userAccountRepository.save(user);
 
-    // Convert the saved entity to DTO and return
     return UserAccountMapper.toDTO(saved);
     }
 
