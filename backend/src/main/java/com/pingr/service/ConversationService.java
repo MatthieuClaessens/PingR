@@ -37,9 +37,10 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
-
-        conversationRepository.deleteById(conversationId);
-
+        if (!conversation.getUserAccounts().contains(userAccount)) {
+            throw new IllegalArgumentException("User is not allowed to delete this conversation");
+        }
+        conversationRepository.delete(conversation);
 
     }
 
