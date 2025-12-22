@@ -50,6 +50,9 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        if (conversation.getConversationType() == ConversationType.SINGLE) {
+            createConversation(conversationId);
+        }
         if (conversation.getUserAccounts().size() > 2) {
             conversation.setConversationType(ConversationType.GROUP);
             if (conversation.getUserAccounts().size() < 10) {
