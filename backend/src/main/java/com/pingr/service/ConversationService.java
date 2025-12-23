@@ -51,14 +51,20 @@ public class ConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
         if (conversation.getConversationType() == ConversationType.SINGLE) {
-            createConversation(conversationId);
+            Conversation newConversation = new Conversation();
+            newConversation.getUserAccounts().addAll(
+                    conversation.getUserAccounts());
+            conversation.getUserAccounts().add(userAccount);
+            conversationRepository.save(newConversation);
         }
-        if (conversation.getUserAccounts().size() > 2) {
-            conversation.setConversationType(ConversationType.GROUP);
-            if (conversation.getUserAccounts().size() < 10) {
-                conversation.getUserAccounts().add(userAccount);
-            }
+        if (conversation.getConversationType() == ConversationType.GROUP &&
+                conversation.getUserAccounts().size() < 10) {
+            conversation.getUserAccounts().add(userAccount);
+            conversationRepository.save(conversation);
+        } else {
+            throw new IllegalArgumentException("Conversation is full");
         }
+
 
         ConversationDTO dto = new ConversationDTO();
         dto.setConversationId(conversation.getConversationId());
