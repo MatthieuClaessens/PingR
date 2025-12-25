@@ -7,9 +7,12 @@ import com.pingr.entity.UserAccount;
 import com.pingr.repository.MessageRepository;
 import com.pingr.repository.ConversationRepository;
 import com.pingr.repository.UserAccountRepository;
+import com.pingr.mapper.MessageMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
 
 @Service
 public class MessageService {
@@ -34,20 +37,37 @@ public class MessageService {
         
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        
+
         Message newMessage = new Message();
         newMessage.setMessageContent(message);
-        newMessage.setMessageDate(java.time.LocalDateTime.now());
+        newMessage.setMessageDate(LocalDateTime.now());
         newMessage.setConversation(conversation);
         newMessage.setUserAccount(userAccount);
-        
-        Message savedMessage = messageRepository.save(newMessage);
-        
-        MessageDTO messageDTO = new MessageDTO();
-        messageDTO.setMessageId(savedMessage.getMessageId());
-        messageDTO.setMessageDate(savedMessage.getMessageDate());
-        messageDTO.setMessageContent(savedMessage.getMessageContent());
-        
-        return messageDTO;
+        return MessageMapper.toDTO(messageRepository.save(newMessage));
+    }
+
+    public MessageDTO readMessage(Long conversationId, Long accountId, Long messageId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        Message message = messageRepository.findById(messageId)
+                .orElseThrow(() -> new RuntimeException("Message not found"));
+        if (!message.getConversation().getConversationId().equals(conversation.getConversationId())) {
+            throw new IllegalArgumentException("Message does not belong to the specified conversation");
+        }
+
+        return MessageMapper.toDTO(message);
+    }
+
+    @Transactional
+    public void deleteMessage(Long conversationId, Long messageId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+            .orElseThrow(() -> new RuntimeException("Conversation not found"));
+        Message message = messageRepository.findById(messageId)
+            .orElseThrow(() -> new RuntimeException("Message not found"));
+
+        if (!message.getConversation().getConversationId().equals(conversation.getConversationId())) {
+            throw new IllegalArgumentException("Message does not belong to the specified conversation");
+        }
+        messageRepository.delete(message);
     }
 }

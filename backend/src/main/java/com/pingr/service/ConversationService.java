@@ -50,36 +50,37 @@ public class ConversationService {
                 .orElseThrow(() -> new RuntimeException("User account not found"));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new RuntimeException("Conversation not found"));
+
+        Conversation savedConversation;
         if (conversation.getConversationType() == ConversationType.SINGLE) {
             Conversation newConversation = new Conversation();
-            newConversation.getUserAccounts().addAll(
-                    conversation.getUserAccounts());
-            conversation.getUserAccounts().add(userAccount);
-            conversationRepository.save(newConversation);
+            newConversation.setConversationType(ConversationType.GROUP);
+            newConversation.getUserAccounts().addAll(conversation.getUserAccounts());
+            newConversation.getUserAccounts().add(userAccount);
+
+            if (newConversation.getUserAccounts().size() > 10) {
+                throw new IllegalArgumentException("Maximum: 10 members allowed");
+            }
+            savedConversation = conversationRepository.save(newConversation);
+            return ConversationMapper.toDTO(savedConversation);
+        } else if (conversation.getUserAccounts().size() >= 10) {
+            throw new IllegalArgumentException(("Maximum 10 members allowed"));
         }
-        if (conversation.getConversationType() == ConversationType.GROUP &&
-                conversation.getUserAccounts().size() < 10) {
-            conversation.getUserAccounts().add(userAccount);
-            conversationRepository.save(conversation);
-        } else {
-            throw new IllegalArgumentException("Conversation is full");
-        }
+        conversation.getUserAccounts().add(userAccount);
+        savedConversation = conversationRepository.save(conversation);
 
+        return ConversationMapper.toDTO(savedConversation);
+}
 
-        ConversationDTO dto = new ConversationDTO();
-        dto.setConversationId(conversation.getConversationId());
-        return dto;
-    }
+@Transactional
+public ConversationDTO kickParticipant(Long conversationId, Long accountId) {
+    UserAccount userAccount = userAccountRepository.findById(accountId)
+            .orElseThrow(() -> new RuntimeException("User account not found"));
+    Conversation conversation = conversationRepository.findById(conversationId)
+            .orElseThrow(() -> new RuntimeException("Conversation not found"));
+    conversation.getUserAccounts().remove(userAccount);
 
-    @Transactional
-    public ConversationDTO kickParticipant(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new RuntimeException("User account not found"));
-        Conversation conversation = conversationRepository.findById(conversationId)
-                .orElseThrow(() -> new RuntimeException("Conversation not found"));
-        conversation.getUserAccounts().remove(userAccount);
-
-        ConversationDTO dto = new ConversationDTO();
-        return dto;
-    }
+    ConversationDTO dto = new ConversationDTO();
+    return dto;
+}
 }
