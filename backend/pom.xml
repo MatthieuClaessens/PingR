@@ -16,6 +16,7 @@
 
     <properties>
         <java.version>21</java.version>
+        <packaging>war</packaging>
     </properties>
 
     <dependencies>
@@ -79,6 +80,7 @@
     </dependencies>
 
     <build>
+        <finalName>app</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
