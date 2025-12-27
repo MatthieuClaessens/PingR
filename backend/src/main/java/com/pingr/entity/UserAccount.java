@@ -35,12 +35,6 @@ public class UserAccount {
     @Column(nullable = false)
     private Role role = Role.USER;
 
-    @ManyToMany
-    @JoinTable(
-            name = "participates",
-            joinColumns = @JoinColumn(name = "account_id"),
-            inverseJoinColumns = @JoinColumn(name = "conversation_id")
-    )
-
+    @ManyToMany(mappedBy = "userAccounts")
     private List<Conversation> conversations = new ArrayList<>();
 }

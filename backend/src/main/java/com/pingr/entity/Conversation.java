@@ -22,6 +22,12 @@ public class Conversation {
     @Column(nullable = false)
     private ConversationType conversationType  = ConversationType.SINGLE;
 
-    @ManyToMany(mappedBy = "conversations") //
+    @ManyToMany
+    @JoinTable(
+            name = "participates",
+            joinColumns = @JoinColumn(name = "conversation_id"),
+            inverseJoinColumns = @JoinColumn(name = "account_id")
+    )
+
     private List<UserAccount> userAccounts = new ArrayList<>();
 }

@@ -6,7 +6,7 @@ import com.pingr.entity.UserAccount;
 import com.pingr.mapper.UserAccountMapper;
 import com.pingr.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
-import jakarta.transaction.Transactional;
+import org.springframework.transaction.annotation.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -23,12 +23,18 @@ public class UserAccountService {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountMapper userAccountMapper;
 
-    public List<UserAccount> getAllUsers() {
-        return userAccountRepository.findAll();
+    private static final String USER_NOT_FOUND = "User not found";
+
+    @Transactional(readOnly = true)
+    public List<UserAccountDTO> getAllUsers() {
+        return userAccountRepository.findAll().stream()
+                .map(UserAccountMapper::toDTO)
+                .toList();
     }
 
-    public Page<UserAccount> getAllUsers(Pageable pageable) {
-        return userAccountRepository.findAll(pageable);
+    public Page<UserAccountDTO> getAllUsers(Pageable pageable) {
+        return userAccountRepository.findAll(pageable)
+        .map(UserAccountMapper::toDTO);
     }
 
 @Transactional
@@ -49,14 +55,14 @@ public class UserAccountService {
     @Transactional
     public UserAccountDTO getUserAccountById(Long accountId) {
     UserAccount existing = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur introuvable" + accountId));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
     return UserAccountMapper.toDTO(existing);
     }
 
     @Transactional
     public UserAccountDTO editUserAccount(Long accountId, UserAccount userAccount) {
         UserAccount existing = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException("Utilisateur Introuvable" + accountId));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
         if (userAccount.getAccountName() != null) {
             existing.setAccountName(userAccount.getAccountName());
         }
@@ -68,7 +74,7 @@ public class UserAccountService {
             userAccountRepository.findByAccountEmail(newAccountEmail)
                     .filter(u -> !u.getAccountId().equals(accountId))
                     .ifPresent(u -> {
-                        throw new IllegalArgumentException("Adresse mail déjà utilisée");});
+                        throw new IllegalArgumentException("Email address already in use");});
             existing.setAccountEmail(newAccountEmail);
         }
         if (userAccount.getAccountPassword() != null) {
@@ -85,7 +91,7 @@ public class UserAccountService {
     @Transactional
     public void deleteUserAccount(Long accountId) {
         if (!userAccountRepository.existsById(accountId)) {
-            throw new EntityNotFoundException("Utilisateur Introuvable");
+            throw new EntityNotFoundException(USER_NOT_FOUND);
         }
         userAccountRepository.deleteById(accountId);
     }
