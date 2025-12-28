@@ -91,7 +91,7 @@ public class ConversationService {
         return ConversationMapper.toDTO(conversation);
     }
 
-    // Gère l'ajout d'un membre avec fork vers une nouvelle entité Groupe si nécessaire
+    // Ajoute un participant et crée une nouvelle conversation de type GROUP si la conversation est privée
     @Transactional
     public ConversationDTO addParticipant(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
