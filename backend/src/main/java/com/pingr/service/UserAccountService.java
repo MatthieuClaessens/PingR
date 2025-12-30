@@ -28,13 +28,13 @@ public class UserAccountService {
     @Transactional(readOnly = true)
     public List<UserAccountDTO> getAllUsers() {
         return userAccountRepository.findAll().stream()
-                .map(UserAccountMapper::toDTO)
+                .map(userAccountMapper::toDTO)
                 .toList();
     }
 
     public Page<UserAccountDTO> getAllUsers(Pageable pageable) {
         return userAccountRepository.findAll(pageable)
-        .map(UserAccountMapper::toDTO);
+        .map(userAccountMapper::toDTO);
     }
 
 @Transactional
@@ -49,14 +49,14 @@ public class UserAccountService {
 
     UserAccount saved = userAccountRepository.save(user);
 
-    return UserAccountMapper.toDTO(saved);
+    return userAccountMapper.toDTO(saved);
     }
 
     @Transactional
     public UserAccountDTO getUserAccountById(Long accountId) {
     UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
-    return UserAccountMapper.toDTO(existing);
+    return userAccountMapper.toDTO(existing);
     }
 
     @Transactional
@@ -84,7 +84,7 @@ public class UserAccountService {
             existing.setAvatarPath(userAccount.getAvatarPath());
         }
         UserAccount saved = userAccountRepository.save(existing);
-        return UserAccountMapper.toDTO(saved);
+        return userAccountMapper.toDTO(saved);
     }
 
 

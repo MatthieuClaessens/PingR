@@ -12,7 +12,7 @@ public class ConversationMapper {
         return c;
     }
 
-    public static ConversationDTO toDTO(Conversation c) {
+    public ConversationDTO toDTO(Conversation c) {
         ConversationDTO dto = new ConversationDTO();
         dto.setConversationId(c.getConversationId());
         return dto;

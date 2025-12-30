@@ -15,7 +15,7 @@ public class UserAccountMapper {
         return u;
     }
 
-    public static UserAccountDTO toDTO(UserAccount u) {
+    public UserAccountDTO toDTO(UserAccount u) {
         UserAccountDTO dto = new UserAccountDTO();
         dto.setAccountId(u.getAccountId());
         dto.setAccountName(u.getAccountName());

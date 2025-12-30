@@ -32,14 +32,16 @@ public class MessageService {
     private static final String USER_NOT_FOUND = "User not found";
     private static final String CONVERSATION_NOT_FOUND = "Conversation not found";
     private static final String MESSAGE_NOT_FOUND = "Message not found";
+    private final MessageMapper messageMapper;
 
     @Autowired
     public MessageService(MessageRepository messageRepository,
                           UserAccountRepository userAccountRepository,
-                          ConversationRepository conversationRepository) {
+                          ConversationRepository conversationRepository, MessageMapper messageMapper) {
         this.messageRepository = messageRepository;
         this.userAccountRepository = userAccountRepository;
         this.conversationRepository = conversationRepository;
+        this.messageMapper = messageMapper;
     }
 
     // Récupérer tous les messages d'un utilisateur
@@ -50,7 +52,7 @@ public class MessageService {
         }
         return messageRepository.findByUserAccount_AccountId(accountId)
                 .stream()
-                .map(MessageMapper::toDTO)
+                .map(messageMapper::toDTO)
                 .toList();
     }
 
@@ -58,7 +60,7 @@ public class MessageService {
     @Transactional(readOnly = true)
     public Page<MessageDTO> getMessagesFromUserAccountId(Long accountId, Pageable pageable) {
         return messageRepository.findByUserAccount_AccountId(accountId, pageable)
-                .map(MessageMapper::toDTO);
+                .map(messageMapper::toDTO);
     }
 
     // Création d'un message : on lie l'auteur et la conversation cible
@@ -75,7 +77,7 @@ public class MessageService {
         newMessage.setMessageDate(LocalDateTime.now());
         newMessage.setConversation(conversation);
         newMessage.setUserAccount(userAccount);
-        return MessageMapper.toDTO(messageRepository.save(newMessage));
+        return messageMapper.toDTO(messageRepository.save(newMessage));
     }
 
     // Récupère un message précis en vérifiant qu'il appartient bien à la bonne conversation
@@ -90,7 +92,7 @@ public class MessageService {
             throw new IllegalArgumentException("Message does not belong to the specified conversation");
         }
 
-        return MessageMapper.toDTO(message);
+        return messageMapper.toDTO(message);
     }
 
     @Transactional
@@ -104,7 +106,7 @@ public class MessageService {
         }
             message.setMessageContent(updatedContent);
             Message updatedMessage = messageRepository.save(message);
-        return MessageMapper.toDTO(updatedMessage);
+        return messageMapper.toDTO(updatedMessage);
     }
 
 

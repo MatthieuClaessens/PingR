@@ -1,12 +1,10 @@
 package com.pingr.service;
 
 import com.pingr.dto.ConversationDTO;
-import com.pingr.dto.MessageDTO;
 import com.pingr.entity.Conversation;
 import com.pingr.entity.ConversationType;
 import com.pingr.entity.UserAccount;
 import com.pingr.mapper.ConversationMapper;
-import com.pingr.mapper.MessageMapper;
 import com.pingr.repository.ConversationRepository;
 import com.pingr.repository.MessageRepository;
 import com.pingr.repository.UserAccountRepository;
@@ -30,6 +28,7 @@ public class ConversationService {
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String CONVERSATION_NOT_FOUND = "Conversation not found";
+    private final ConversationMapper conversationMapper;
 
     // Récupérer toutes les conversations d'un utilisateur
     @Transactional(readOnly = true)
@@ -37,9 +36,9 @@ public class ConversationService {
         if (!userAccountRepository.existsById(accountId)) {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         }
-        return conversationRepository.findByUserAccount_AccountId(accountId)
+        return conversationRepository.findByUserAccounts_AccountId(accountId)
                 .stream()
-                .map(ConversationMapper::toDTO)
+                .map(conversationMapper::toDTO)
                 .toList();
     }
 
@@ -47,8 +46,8 @@ public class ConversationService {
     @Transactional(readOnly = true)
     public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Pageable pageable) {
         // On appelle une méthode du repository qui renvoie des OBJETS Conversation
-        return conversationRepository.findByUserAccount_AccountId(accountId, pageable)
-                .map(ConversationMapper::toDTO);
+        return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
+                .map(conversationMapper::toDTO);
     }
 
     // Initialisation d'une nouvelle discussion, par défaut en mode "SINGLE"    @Transactional
@@ -59,7 +58,7 @@ public class ConversationService {
         conversation.setConversationType(ConversationType.SINGLE);
         conversation.getUserAccounts().add(userAccount);
         Conversation saved = conversationRepository.save(conversation);
-        return ConversationMapper.toDTO(saved);
+        return conversationMapper.toDTO(saved);
     }
 
 
@@ -88,7 +87,7 @@ public class ConversationService {
         if (!conversation.getUserAccounts().contains(userAccount)) {
             throw new IllegalArgumentException("User is not allowed to read this conversation");
         }
-        return ConversationMapper.toDTO(conversation);
+        return conversationMapper.toDTO(conversation);
     }
 
     // Ajoute un participant et crée une nouvelle conversation de type GROUP si la conversation est privée
@@ -114,7 +113,7 @@ public class ConversationService {
             }
             // Cas classique : ajout simple d'un participant à un groupe existant
             savedConversation = conversationRepository.save(newConversation);
-            return ConversationMapper.toDTO(savedConversation);
+            return conversationMapper.toDTO(savedConversation);
         } else if (conversation.getConversationType() == ConversationType.GROUP &&
                 conversation.getUserAccounts().size() >= 10) {
             // Sécurité pour les groupes existants : on bloque l'ajout si le plafond est atteint
@@ -124,7 +123,7 @@ public class ConversationService {
         conversation.getUserAccounts().add(userAccount);
         savedConversation = conversationRepository.save(conversation);
 
-        return ConversationMapper.toDTO(savedConversation);
+        return conversationMapper.toDTO(savedConversation);
     }
 
     // Retire un utilisateur de la liste des participants
@@ -136,6 +135,6 @@ public class ConversationService {
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
         // La JPA se chargera de mettre à jour la table de jointure suite au retrait de l'élément
         conversation.getUserAccounts().remove(userAccount);
-        return ConversationMapper.toDTO(conversationRepository.save(conversation));
+        return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
 }

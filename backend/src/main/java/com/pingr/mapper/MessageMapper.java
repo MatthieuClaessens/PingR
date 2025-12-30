@@ -14,7 +14,7 @@ public class MessageMapper {
         return m;
     }
 
-    public static MessageDTO toDTO(Message m) {
+    public MessageDTO toDTO(Message m) {
         MessageDTO dto = new MessageDTO();
         dto.setMessageId(m.getMessageId());
         dto.setMessageDate(m.getMessageDate());
