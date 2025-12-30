@@ -48,7 +48,7 @@ public class MessageService {
         if (!userAccountRepository.existsById(accountId)) {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         }
-        return messageRepository.getMessagesByUserAccountId(accountId)
+        return messageRepository.findByUserAccount_AccountId(accountId)
                 .stream()
                 .map(MessageMapper::toDTO)
                 .toList();
@@ -57,7 +57,7 @@ public class MessageService {
     // Version paginée pour éviter de charger des milliers de messages d'un coup
     @Transactional(readOnly = true)
     public Page<MessageDTO> getMessagesFromUserAccountId(Long accountId, Pageable pageable) {
-        return messageRepository.getMessagesByUserAccountId(accountId, pageable)
+        return messageRepository.findByUserAccount_AccountId(accountId, pageable)
                 .map(MessageMapper::toDTO);
     }
 

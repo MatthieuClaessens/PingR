@@ -10,6 +10,6 @@ import java.util.List;
 
 @Repository
 public interface MessageRepository extends JpaRepository<Message, Long> {
-    List<Message> getMessagesByUserAccountId(Long accountId);
-    Page<Message> getMessagesByUserAccountId(Long accountId, Pageable pageable);
+    List<Message> findByUserAccount_AccountId(Long accountId);
+    Page<Message> findByUserAccount_AccountId(Long accountId, Pageable pageable);
 }

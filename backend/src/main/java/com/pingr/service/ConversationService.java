@@ -37,7 +37,7 @@ public class ConversationService {
         if (!userAccountRepository.existsById(accountId)) {
             throw new EntityNotFoundException(USER_NOT_FOUND);
         }
-        return conversationRepository.getConversationsByUserAccountId(accountId)
+        return conversationRepository.findByUserAccount_AccountId(accountId)
                 .stream()
                 .map(ConversationMapper::toDTO)
                 .toList();
@@ -47,7 +47,7 @@ public class ConversationService {
     @Transactional(readOnly = true)
     public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Pageable pageable) {
         // On appelle une méthode du repository qui renvoie des OBJETS Conversation
-        return conversationRepository.getConversationsByUserAccountId(accountId, pageable)
+        return conversationRepository.findByUserAccount_AccountId(accountId, pageable)
                 .map(ConversationMapper::toDTO);
     }
 

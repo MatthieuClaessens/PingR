@@ -2,7 +2,9 @@ package com.pingr.mapper;
 
 import com.pingr.entity.UserAccount;
 import com.pingr.dto.UserAccountDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UserAccountMapper {
     public static UserAccount fromDTO(UserAccountDTO dto) {
         UserAccount u = new UserAccount();

@@ -2,7 +2,9 @@ package com.pingr.mapper;
 
 import com.pingr.entity.Message;
 import com.pingr.dto.MessageDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class MessageMapper {
     public static Message fromDTO(MessageDTO dto) {
         Message m = new Message();

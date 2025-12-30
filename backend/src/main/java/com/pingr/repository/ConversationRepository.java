@@ -14,6 +14,6 @@ import java.util.List;
 public interface ConversationRepository extends JpaRepository<Conversation, Long> {
 
     Conversation userAccounts(List<UserAccount> userAccounts);
-    List<Conversation> getConversationsByUserAccountId(Long accountId);
-    Page<Conversation> getConversationsByUserAccountId(Long accountId, Pageable pageable);
+    List<Conversation> findByUserAccount_AccountId(Long accountId);
+    Page<Conversation> findByUserAccount_AccountId(Long accountId, Pageable pageable);
 }

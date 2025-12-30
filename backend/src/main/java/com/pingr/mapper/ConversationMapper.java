@@ -2,7 +2,9 @@ package com.pingr.mapper;
 
 import com.pingr.entity.Conversation;
 import com.pingr.dto.ConversationDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 public class ConversationMapper {
     public static Conversation fromDTO(ConversationDTO dto) {
         Conversation c = new Conversation();
