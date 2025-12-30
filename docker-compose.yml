@@ -1,27 +1,38 @@
 services:
   postgres:
-    image: "postgres:18.0"
-    hostname: postgres
+    image: "postgres:18.1"
+    container_name: postgres_db
     ports:
       - "5432:5432"
     environment:
       - POSTGRES_DB=pingr
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U admin -d pingr"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
 
   api:
     build: .
+    container_name: pingr_api
     ports:
       - "8080:8080"
     depends_on:
-      - postgres
+      postgres:
+        condition: service_healthy # Attente DB prête
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/pingr
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
+      # Création des tables tout seul à partir des entités via Hibernate
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
 
   adminer:
     image: "adminer:latest"
+    container_name: adminer_ui
     ports:
       - "8081:8080"
     depends_on:

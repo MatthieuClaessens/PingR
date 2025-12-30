@@ -37,4 +37,7 @@ public class UserAccount {
 
     @ManyToMany(mappedBy = "userAccounts")
     private List<Conversation> conversations = new ArrayList<>();
+
+    @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 }

@@ -28,6 +28,8 @@ public class Conversation {
             joinColumns = @JoinColumn(name = "conversation_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id")
     )
+    private List <UserAccount> userAccounts = new ArrayList<>();
 
-    private List<UserAccount> userAccounts = new ArrayList<>();
+    @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Message> messages = new ArrayList<>();
 }
