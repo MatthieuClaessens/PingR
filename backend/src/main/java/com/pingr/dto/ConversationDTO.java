@@ -7,4 +7,5 @@ import lombok.Data;
 public class ConversationDTO {
     private Long conversationId;
     private ConversationType conversationType;
+    private Long accountId;
 }
