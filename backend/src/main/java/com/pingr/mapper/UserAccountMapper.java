@@ -6,12 +6,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class UserAccountMapper {
-    public static UserAccount fromDTO(UserAccountDTO dto) {
+    public UserAccount fromDTO(UserAccountDTO dto) {
         UserAccount u = new UserAccount();
         u.setAccountId(dto.getAccountId());
         u.setAccountName(dto.getAccountName());
         u.setAccountTag(dto.getAccountTag());
         u.setAvatarPath(dto.getAvatarPath());
+        u.setRole(dto.getRole());
         return u;
     }
 
@@ -21,6 +22,7 @@ public class UserAccountMapper {
         dto.setAccountName(u.getAccountName());
         dto.setAccountTag(u.getAccountTag());
         dto.setAvatarPath(u.getAvatarPath());
+        dto.setRole(u.getRole());
         return dto;
     }
 }

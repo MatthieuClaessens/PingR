@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class MessageMapper {
-    public static Message fromDTO(MessageDTO dto) {
+    public Message fromDTO(MessageDTO dto) {
         Message m = new Message();
         m.setMessageId(dto.getMessageId());
         m.setMessageDate(dto.getMessageDate());
