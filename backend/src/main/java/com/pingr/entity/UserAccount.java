@@ -4,7 +4,9 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "user_account")
@@ -36,7 +38,7 @@ public class UserAccount {
     private Role role = Role.USER;
 
     @ManyToMany(mappedBy = "userAccounts")
-    private List<Conversation> conversations = new ArrayList<>();
+    private Set<Conversation> conversations = new HashSet<>();
 
     @OneToMany(mappedBy = "userAccount", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();

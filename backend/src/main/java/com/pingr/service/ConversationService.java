@@ -6,7 +6,6 @@ import com.pingr.entity.ConversationType;
 import com.pingr.entity.UserAccount;
 import com.pingr.mapper.ConversationMapper;
 import com.pingr.repository.ConversationRepository;
-import com.pingr.repository.MessageRepository;
 import com.pingr.repository.UserAccountRepository;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -15,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 
 @Service
@@ -24,13 +25,19 @@ public class ConversationService {
 
     private final ConversationRepository conversationRepository;
     private final UserAccountRepository userAccountRepository;
-    private final MessageRepository messageRepository;
+    private final ConversationMapper conversationMapper;
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String CONVERSATION_NOT_FOUND = "Conversation not found";
-    private final ConversationMapper conversationMapper;
 
-    // Récupérer toutes les conversations d'un utilisateur
+    // Obtenir les conversations d'un utilisateur par son id (Pagination)
+    @Transactional(readOnly = true)
+    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Pageable pageable) {
+        return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
+                .map(conversationMapper::toDTO);
+    }
+
+    // Obtenir les conversations d'un utilisateur par son id (Liste)
     @Transactional(readOnly = true)
     public List<ConversationDTO> getConversationsFromUserAccountId(Long accountId) {
         if (!userAccountRepository.existsById(accountId)) {
@@ -42,99 +49,86 @@ public class ConversationService {
                 .toList();
     }
 
-    // Récupère les conversations (groupes ou privées) auxquelles appartient l'utilisateur
-    @Transactional(readOnly = true)
-    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Pageable pageable) {
-        // On appelle une méthode du repository qui renvoie des OBJETS Conversation
-        return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
-                .map(conversationMapper::toDTO);
-    }
+    // Créer une conversation
+    @Transactional
+    public ConversationDTO createConversation(Set<Long> accountIds, Long creatorId) {
+        accountIds.add(creatorId);
+        Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(accountIds));
 
-    // Initialisation d'une nouvelle discussion, par défaut en mode "SINGLE"    @Transactional
-    public ConversationDTO createConversation(Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        if (userAccounts.size() != accountIds.size()) {
+            throw new EntityNotFoundException("One or more users could not be found.");
+        }
+        // Si la conversation contient deux personnes
+        if (userAccounts.size() == 2) {
+            List<Conversation> existing = conversationRepository
+                    .findByUserAccounts_AccountIdAndConversationType(creatorId, ConversationType.SINGLE);
+            // Alors dans notre conversation existante
+            for (Conversation conv : existing) {
+                if (conv.getUserAccounts().equals(userAccounts)) {
+                    return conversationMapper.toDTO(conv);
+                }
+            }
+        }
         Conversation conversation = new Conversation();
-        conversation.setConversationType(ConversationType.SINGLE);
-        conversation.getUserAccounts().add(userAccount);
-        Conversation saved = conversationRepository.save(conversation);
-        return conversationMapper.toDTO(saved);
+        conversation.setCreatorId(creatorId);
+        conversation.setConversationType(userAccounts.size() > 2 ? ConversationType.GROUP : ConversationType.SINGLE);
+        conversation.setUserAccounts(userAccounts);
+
+        return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
 
 
-    // Supprime la conversation, mais seulement si l'utilisateur qui demande fait bien partie des participants    @Transactional
+    @Transactional
     public void deleteConversation(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        // Sécurité : on évite qu'un utilisateur externe puisse supprimer la discussion
-        if (!conversation.getUserAccounts().contains(userAccount)) {
-            throw new IllegalArgumentException("User is not allowed to delete this conversation");
+
+        if (!conversation.getCreatorId().equals(accountId)) {
+            throw new IllegalArgumentException("Only the creator can delete this conversation.");
         }
         conversationRepository.delete(conversation);
-
     }
 
-    // Récupère les détails d'une discussion après avoir vérifié les droits d'accès
     @Transactional(readOnly = true)
     public ConversationDTO getConversationById(Long conversationId, Long accountId) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        // On s'assure que l'utilisateur est bien membre pour autoriser la lecture
         if (!conversation.getUserAccounts().contains(userAccount)) {
             throw new IllegalArgumentException("User is not allowed to read this conversation");
         }
         return conversationMapper.toDTO(conversation);
     }
 
-    // Ajoute un participant et crée une nouvelle conversation de type GROUP si la conversation est privée
     @Transactional
-    public ConversationDTO addParticipant(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+    public ConversationDTO addParticipant(Long conversationId, Long targetId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        Conversation savedConversation;
-        // Si c'est un chat privé (SINGLE), on bascule sur une nouvelle entité de type GROUP
-        if (conversation.getConversationType() == ConversationType.SINGLE) {
-            Conversation newConversation = new Conversation();
-            newConversation.setConversationType(ConversationType.GROUP);
-            // On transfère les membres du chat privé vers cette nouvelle discussion groupée
-            newConversation.getUserAccounts().addAll(conversation.getUserAccounts());
-            newConversation.getUserAccounts().add(userAccount);
 
-            // On limite la taille des groupes à 10 pour garder des discussions gérables
-            if (newConversation.getUserAccounts().size() > 10) {
-                // Vérification de la limite si la conversation est déjà un groupe
-                throw new IllegalArgumentException("Maximum: 10 members allowed");
-            }
-            // Cas classique : ajout simple d'un participant à un groupe existant
-            savedConversation = conversationRepository.save(newConversation);
-            return conversationMapper.toDTO(savedConversation);
-        } else if (conversation.getConversationType() == ConversationType.GROUP &&
-                conversation.getUserAccounts().size() >= 10) {
-            // Sécurité pour les groupes existants : on bloque l'ajout si le plafond est atteint
-            throw new IllegalArgumentException(("Maximum 10 members allowed"));
+        UserAccount target = userAccountRepository.findById(targetId)
+                .orElseThrow(() -> new EntityNotFoundException("Target user not found"));
+
+        if (conversation.getUserAccounts().size() >= 10) {
+            throw new IllegalArgumentException("Maximum 10 members allowed");
         }
-        // Cas standard : ajout d'un participant à un groupe qui n'est pas encore complet
-        conversation.getUserAccounts().add(userAccount);
-        savedConversation = conversationRepository.save(conversation);
 
-        return conversationMapper.toDTO(savedConversation);
+        conversation.getUserAccounts().add(target);
+        if (conversation.getUserAccounts().size() > 2) {
+            conversation.setConversationType(ConversationType.GROUP);
+        }
+
+        return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
 
-    // Retire un utilisateur de la liste des participants
     @Transactional
-    public ConversationDTO kickParticipant(Long conversationId, Long accountId) {
-        UserAccount userAccount = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+    public ConversationDTO kickParticipant(Long conversationId, Long targetId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        // La JPA se chargera de mettre à jour la table de jointure suite au retrait de l'élément
-        conversation.getUserAccounts().remove(userAccount);
+        UserAccount target = userAccountRepository.findById(targetId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        conversation.getUserAccounts().remove(target);
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
 }

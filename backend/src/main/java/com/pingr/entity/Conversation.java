@@ -5,7 +5,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "conversation")
@@ -18,6 +20,9 @@ public class Conversation {
     @Column(nullable = false)
     private Long conversationId;
 
+    @Column(name = "creator_id")
+            private Long creatorId;
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private ConversationType conversationType  = ConversationType.SINGLE;
@@ -28,7 +33,7 @@ public class Conversation {
             joinColumns = @JoinColumn(name = "conversation_id"),
             inverseJoinColumns = @JoinColumn(name = "account_id")
     )
-    private List <UserAccount> userAccounts = new ArrayList<>();
+    private Set<UserAccount> userAccounts = new HashSet<>();
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();

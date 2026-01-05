@@ -2,7 +2,11 @@ package com.pingr.mapper;
 
 import com.pingr.entity.Conversation;
 import com.pingr.dto.ConversationDTO;
+import com.pingr.entity.UserAccount;
 import org.springframework.stereotype.Component;
+
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component
 public class ConversationMapper {
@@ -14,11 +18,18 @@ public class ConversationMapper {
     }
 
     public ConversationDTO toDTO(Conversation c) {
+        if (c == null) return null;
+
         ConversationDTO dto = new ConversationDTO();
         dto.setConversationId(c.getConversationId());
         dto.setConversationType(c.getConversationType());
-        if (c.getUserAccounts() != null && !c.getUserAccounts().isEmpty()) {
-            dto.setAccountId(c.getUserAccounts().get(0).getAccountId());
+        dto.setCreatorId(c.getCreatorId());
+
+        if (c.getUserAccounts() != null) {
+            Set<Long> accountsId = c.getUserAccounts().stream()
+                    .map(UserAccount::getAccountId)
+                    .collect(Collectors.toSet());
+            dto.setAccountIds(accountsId);
         }
         return dto;
     }
