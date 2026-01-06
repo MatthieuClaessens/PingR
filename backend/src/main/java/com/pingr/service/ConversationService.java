@@ -32,7 +32,7 @@ public class ConversationService {
 
     // Obtenir les conversations d'un utilisateur par son id (Pagination)
     @Transactional(readOnly = true)
-    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Pageable pageable) {
+    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Long requesterId, Pageable pageable) {
         return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
                 .map(conversationMapper::toDTO);
     }
@@ -82,7 +82,6 @@ public class ConversationService {
     public void deleteConversation(Long conversationId, Long accountId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-
         if (!conversation.getCreatorId().equals(accountId)) {
             throw new IllegalArgumentException("Only the creator can delete this conversation.");
         }
@@ -102,17 +101,25 @@ public class ConversationService {
     }
 
     @Transactional
-    public ConversationDTO addParticipant(Long conversationId, Long targetId) {
+    public ConversationDTO addParticipant(Long conversationId, Long targetId, Long requesterId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException("Target user not found"));
-
         if (conversation.getUserAccounts().size() >= 10) {
             throw new IllegalArgumentException("Maximum 10 members allowed");
         }
-
+        if (conversation.getConversationType() == ConversationType.GROUP) {
+            if (!requesterId.equals(conversation.getCreatorId())) {
+                throw new IllegalArgumentException("Only the creator can add to a group");
+            }
+        } else {
+            boolean isParticipant = conversation.getUserAccounts().stream()
+                    .anyMatch(u -> u.getId().equals(requesterId));
+            if (!isParticipant) {
+                throw new SecurityException("You are not part of this conversation");
+            }
+        }
         conversation.getUserAccounts().add(target);
         if (conversation.getUserAccounts().size() > 2) {
             conversation.setConversationType(ConversationType.GROUP);
@@ -120,14 +127,15 @@ public class ConversationService {
 
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
-
     @Transactional
-    public ConversationDTO kickParticipant(Long conversationId, Long targetId) {
+    public ConversationDTO kickParticipant(Long conversationId, Long targetId, Long requesterId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
+        if (!requesterId.equals(conversation.getCreatorId())) {
+            throw new IllegalArgumentException("Only the creator can kick a participant");
+        }
         conversation.getUserAccounts().remove(target);
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }

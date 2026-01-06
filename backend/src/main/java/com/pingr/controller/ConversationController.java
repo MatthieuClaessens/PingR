@@ -1,7 +1,6 @@
 package com.pingr.controller;
 
 import com.pingr.dto.ConversationDTO;
-import com.pingr.dto.CreateConversationDTO;
 import com.pingr.service.ConversationService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -70,20 +69,22 @@ public class ConversationController {
     @PatchMapping("/{conversationId}/participants/{targetId}")
     public ResponseEntity<ConversationDTO> addParticipant(
             @PathVariable Long conversationId,
-            @PathVariable Long targetId
+            @PathVariable Long targetId,
+            @RequestParam Long requesterId
     ) {
         ConversationDTO updated = conversationService
-                .addParticipant(conversationId, targetId);
+                .addParticipant(conversationId, targetId, requesterId);
         return ResponseEntity.ok(updated);
     }
 
     @DeleteMapping("/{conversationId}/participants/{targetId}")
     public ResponseEntity<ConversationDTO> kickParticipant(
             @PathVariable Long conversationId,
-            @PathVariable Long targetId
+            @PathVariable Long targetId,
+            @RequestParam Long requesterId
     ) {
         ConversationDTO updated = conversationService
-                .kickParticipant(conversationId, targetId);
+                .kickParticipant(conversationId, targetId, requesterId);
         return ResponseEntity.ok(updated);
     }
 }
