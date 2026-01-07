@@ -115,7 +115,7 @@ public class ConversationService {
             }
         } else {
             boolean isParticipant = conversation.getUserAccounts().stream()
-                    .anyMatch(u -> u.getId().equals(requesterId));
+                    .anyMatch(u -> u.getAccountId().equals(requesterId));
             if (!isParticipant) {
                 throw new SecurityException("You are not part of this conversation");
             }
@@ -127,6 +127,7 @@ public class ConversationService {
 
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
+
     @Transactional
     public ConversationDTO kickParticipant(Long conversationId, Long targetId, Long requesterId) {
         Conversation conversation = conversationRepository.findById(conversationId)
@@ -139,4 +140,23 @@ public class ConversationService {
         conversation.getUserAccounts().remove(target);
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
-}
+
+    @Transactional
+    public void leaveParticipant(Long conversationId, Long accountId) {
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
+        boolean removed = conversation.getUserAccounts().removeIf(u -> u.getAccountId().equals(accountId));
+        if (!removed) {
+            throw new SecurityException("You are not a participant of this conversation");
+        }
+        if (conversation.getUserAccounts().isEmpty()) {
+            conversationRepository.delete(conversation);
+            return;
+        }
+        if (conversation.getCreatorId().equals(accountId)) {
+            Long nextCreatorId = conversation.getUserAccounts().iterator().next().getAccountId();
+            conversation.setCreatorId(nextCreatorId);
+            }
+            conversationRepository.save(conversation);
+        }
+    }
