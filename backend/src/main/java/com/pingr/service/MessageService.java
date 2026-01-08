@@ -36,34 +36,44 @@ public class MessageService {
     public Page<MessageDTO> getMessagesByConversationId(Long conversationId, Long requesterId, Pageable pageable) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
+
         boolean isParticipant = conversation.getUserAccounts().stream()
                 .anyMatch(u -> u.getAccountId().equals(requesterId));
         if (!isParticipant) {
             throw new SecurityException(NOT_PARTICIPANT);
         }
+
         return messageRepository.findByConversation_ConversationId(conversationId, pageable)
                 .map(messageMapper::toDTO);
     }
 
     @Transactional
     public MessageDTO createMessage(Long conversationId, Long accountId, String messageContent) {
-        if (messageContent.isBlank()) {
-            Conversation conversation = conversationRepository.findById(conversationId)
-                    .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-            UserAccount userAccount = userAccountRepository.findById(accountId)
-                    .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-            boolean isParticipant = conversation.getUserAccounts().stream()
-                    .anyMatch(u -> u.getAccountId().equals(accountId));
-            if (!isParticipant) {
-                throw new SecurityException(NOT_PARTICIPANT);
-            }
-            Message newMessage = new Message();
-            newMessage.setMessageContent(messageContent);
-            newMessage.setMessageDate(LocalDateTime.now());
-            newMessage.setConversation(conversation);
-            newMessage.setUserAccount(userAccount);
-            return messageMapper.toDTO(messageRepository.save(newMessage));
+        // Approche silencieuse : nettoyage et vérification anticipée
+        String cleanedContent = (messageContent != null) ? messageContent.trim() : "";
+        if (cleanedContent.isEmpty()) {
+            return null;
         }
+
+        Conversation conversation = conversationRepository.findById(conversationId)
+                .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
+
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        boolean isParticipant = conversation.getUserAccounts().stream()
+                .anyMatch(u -> u.getAccountId().equals(accountId));
+        if (!isParticipant) {
+            throw new SecurityException(NOT_PARTICIPANT);
+        }
+
+        Message newMessage = new Message();
+        newMessage.setMessageContent(cleanedContent);
+        newMessage.setMessageDate(LocalDateTime.now());
+        newMessage.setConversation(conversation);
+        newMessage.setUserAccount(userAccount);
+
+        return messageMapper.toDTO(messageRepository.save(newMessage));
     }
 
     @Transactional(readOnly = true)
@@ -72,40 +82,49 @@ public class MessageService {
                 .orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
 
         if (!message.getConversation().getConversationId().equals(conversationId)) {
-            throw new IllegalArgumentException("Message does not belong to this conversation");
+            throw new IllegalArgumentException("Inconsistent conversation context");
         }
+
         boolean isParticipant = message.getConversation().getUserAccounts().stream()
                 .anyMatch(u -> u.getAccountId().equals(requesterId));
         if (!isParticipant) {
             throw new SecurityException(NOT_PARTICIPANT);
         }
+
         return messageMapper.toDTO(message);
     }
 
     @Transactional
     public MessageDTO editMessage(Long conversationId, Long messageId, Long requesterId, String updatedContent) {
-        Message message = getValidatedMessage(conversationId, messageId, requesterId);
+        String cleanedContent = (updatedContent != null) ? updatedContent.trim() : "";
+        if (cleanedContent.isEmpty()) {
+            return null;
+        }
 
-        message.setMessageContent(updatedContent);
+        Message message = getValidatedMessage(conversationId, messageId, requesterId);
+        message.setMessageContent(cleanedContent);
+
         return messageMapper.toDTO(messageRepository.save(message));
     }
 
     @Transactional
     public void deleteMessage(Long conversationId, Long messageId, Long requesterId) {
         Message message = getValidatedMessage(conversationId, messageId, requesterId);
-
         messageRepository.delete(message);
     }
 
     private Message getValidatedMessage(Long conversationId, Long messageId, Long requesterId) {
         Message message = messageRepository.findById(messageId)
                 .orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
+
         if (!message.getConversation().getConversationId().equals(conversationId)) {
             throw new IllegalArgumentException("Inconsistent conversation context");
         }
+
         if (!message.getUserAccount().getAccountId().equals(requesterId)) {
             throw new SecurityException(NOT_AUTHOR);
         }
+
         return message;
     }
 }

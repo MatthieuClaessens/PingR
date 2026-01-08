@@ -58,7 +58,6 @@ public class ConversationService {
         if (userAccounts.size() != accountIds.size()) {
             throw new EntityNotFoundException("One or more users could not be found.");
         }
-        // Si la conversation contient deux personnes
         if (userAccounts.size() == 2) {
             List<Conversation> existing = conversationRepository
                     .findByUserAccounts_AccountIdAndConversationType(creatorId, ConversationType.SINGLE);

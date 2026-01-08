@@ -23,7 +23,8 @@ public class UserAccountService {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountMapper userAccountMapper;
 
-    private static final String USER_NOT_FOUND = "L'utilisateur n'a pas été trouvé avec l'ID : ";
+    // Traduction effectuée ici
+    private static final String USER_NOT_FOUND = "User not found with ID: ";
 
     @Transactional(readOnly = true)
     public List<UserAccountDTO> getAllUsers() {
