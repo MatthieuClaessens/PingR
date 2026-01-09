@@ -49,10 +49,12 @@ public class MessageService {
 
     @Transactional
     public MessageDTO createMessage(Long conversationId, Long accountId, String messageContent) {
-        // Approche silencieuse : nettoyage et vérification anticipée
         String cleanedContent = (messageContent != null) ? messageContent.trim() : "";
         if (cleanedContent.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Message cannot be empty");
+        }
+        if (cleanedContent.length() > 2000) {
+            throw new IllegalArgumentException("Message cannot exceed 2000 characters");
         }
 
         Conversation conversation = conversationRepository.findById(conversationId)
@@ -98,7 +100,10 @@ public class MessageService {
     public MessageDTO editMessage(Long conversationId, Long messageId, Long requesterId, String updatedContent) {
         String cleanedContent = (updatedContent != null) ? updatedContent.trim() : "";
         if (cleanedContent.isEmpty()) {
-            return null;
+            throw new IllegalArgumentException("Message cannot be empty");
+        }
+        if (cleanedContent.length() > 2000) {
+            throw new IllegalArgumentException("Message cannot exceed 2000 characters");
         }
 
         Message message = getValidatedMessage(conversationId, messageId, requesterId);

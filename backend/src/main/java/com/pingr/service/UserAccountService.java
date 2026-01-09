@@ -23,7 +23,6 @@ public class UserAccountService {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountMapper userAccountMapper;
 
-    // Traduction effectuée ici
     private static final String USER_NOT_FOUND = "User not found with ID: ";
 
     @Transactional(readOnly = true)
@@ -40,7 +39,8 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password, String avatarPath) {
+    public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password,
+            String avatarPath) {
         UserAccount user = new UserAccount();
         user.setAccountName(accountName);
         user.setAccountTag(accountTag);
@@ -65,9 +65,12 @@ public class UserAccountService {
         UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
 
-        if (dto.getAccountName() != null) existing.setAccountName(dto.getAccountName());
-        if (dto.getAccountTag() != null) existing.setAccountTag(dto.getAccountTag());
-        if (dto.getAvatarPath() != null) existing.setAvatarPath(dto.getAvatarPath());
+        if (dto.getAccountName() != null)
+            existing.setAccountName(dto.getAccountName());
+        if (dto.getAccountTag() != null)
+            existing.setAccountTag(dto.getAccountTag());
+        if (dto.getAvatarPath() != null)
+            existing.setAvatarPath(dto.getAvatarPath());
 
         return userAccountMapper.toDTO(userAccountRepository.save(existing));
     }
@@ -78,5 +81,18 @@ public class UserAccountService {
             throw new EntityNotFoundException(USER_NOT_FOUND + accountId);
         }
         userAccountRepository.deleteById(accountId);
+    }
+
+    @Transactional
+    public void changePassword(Long accountId, String currentPassword, String newPassword) {
+        UserAccount user = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+
+        if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
+            throw new IllegalArgumentException("Invalid current password");
+        }
+
+        user.setAccountPassword(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(user);
     }
 }

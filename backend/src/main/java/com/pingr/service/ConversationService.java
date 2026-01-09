@@ -18,7 +18,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-
 @Service
 @RequiredArgsConstructor
 public class ConversationService {
@@ -29,15 +28,15 @@ public class ConversationService {
 
     private static final String USER_NOT_FOUND = "User not found";
     private static final String CONVERSATION_NOT_FOUND = "Conversation not found";
+    private static final int MAX_PARTICIPANTS = 10;
 
-    // Obtenir les conversations d'un utilisateur par son id (Pagination)
     @Transactional(readOnly = true)
-    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId, Long requesterId, Pageable pageable) {
+    public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId,
+            Pageable pageable) {
         return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
                 .map(conversationMapper::toDTO);
     }
 
-    // Obtenir les conversations d'un utilisateur par son id (Liste)
     @Transactional(readOnly = true)
     public List<ConversationDTO> getConversationsFromUserAccountId(Long accountId) {
         if (!userAccountRepository.existsById(accountId)) {
@@ -49,11 +48,10 @@ public class ConversationService {
                 .toList();
     }
 
-    // Créer une conversation
     @Transactional
     public ConversationDTO createConversation(Set<Long> accountIds, Long creatorId) {
-        accountIds.add(creatorId);
         Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(accountIds));
+        accountIds.add(creatorId);
 
         if (userAccounts.size() != accountIds.size()) {
             throw new EntityNotFoundException("One or more users could not be found.");
@@ -61,7 +59,6 @@ public class ConversationService {
         if (userAccounts.size() == 2) {
             List<Conversation> existing = conversationRepository
                     .findByUserAccounts_AccountIdAndConversationType(creatorId, ConversationType.SINGLE);
-            // Alors dans notre conversation existante
             for (Conversation conv : existing) {
                 if (conv.getUserAccounts().equals(userAccounts)) {
                     return conversationMapper.toDTO(conv);
@@ -75,7 +72,6 @@ public class ConversationService {
 
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
-
 
     @Transactional
     public void deleteConversation(Long conversationId, Long accountId) {
@@ -105,8 +101,8 @@ public class ConversationService {
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException("Target user not found"));
-        if (conversation.getUserAccounts().size() >= 10) {
-            throw new IllegalArgumentException("Maximum 10 members allowed");
+        if (conversation.getUserAccounts().size() >= MAX_PARTICIPANTS) {
+            throw new IllegalArgumentException("Maximum " + MAX_PARTICIPANTS + " members allowed");
         }
         if (conversation.getConversationType() == ConversationType.GROUP) {
             if (!requesterId.equals(conversation.getCreatorId())) {
@@ -153,9 +149,11 @@ public class ConversationService {
             return;
         }
         if (conversation.getCreatorId().equals(accountId)) {
-            Long nextCreatorId = conversation.getUserAccounts().iterator().next().getAccountId();
-            conversation.setCreatorId(nextCreatorId);
-            }
-            conversationRepository.save(conversation);
+            UserAccount nextCreatorId = conversation.getUserAccounts().stream()
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalStateException("Conversation should not be empty"));
+            conversation.setCreatorId(nextCreatorId.getAccountId());
         }
+        conversationRepository.save(conversation);
     }
+}
