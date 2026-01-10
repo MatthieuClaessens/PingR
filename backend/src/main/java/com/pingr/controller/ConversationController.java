@@ -87,4 +87,14 @@ public class ConversationController {
                 .kickParticipant(conversationId, targetId, requesterId);
         return ResponseEntity.ok(updated);
     }
+
+    @DeleteMapping("/{conversationId}/leave")
+    public ResponseEntity<Void> leaveParticipant(
+            @PathVariable Long conversationId,
+            @RequestParam Long accountId
+    ) {
+        conversationService.leaveParticipant(conversationId, accountId);
+        return ResponseEntity.noContent().build();
+    }
+
 }
