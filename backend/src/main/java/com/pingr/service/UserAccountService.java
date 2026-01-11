@@ -64,14 +64,12 @@ public class UserAccountService {
     public UserAccountDTO editUserAccount(Long accountId, UserAccountDTO dto) {
         UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
-
-        if (dto.getAccountName() != null)
-            existing.setAccountName(dto.getAccountName());
-        if (dto.getAccountTag() != null)
-            existing.setAccountTag(dto.getAccountTag());
-        if (dto.getAvatarPath() != null)
+        if (dto.getAccountName() != null && !dto.getAccountName().trim().isEmpty()) {
+            existing.setAccountName(dto.getAccountName().trim());
+        }
+        if (dto.getAvatarPath() != null) {
             existing.setAvatarPath(dto.getAvatarPath());
-
+        }
         return userAccountMapper.toDTO(userAccountRepository.save(existing));
     }
 

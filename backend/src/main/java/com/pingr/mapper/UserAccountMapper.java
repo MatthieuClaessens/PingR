@@ -10,7 +10,6 @@ public class UserAccountMapper {
         UserAccount u = new UserAccount();
         u.setAccountId(dto.getAccountId());
         u.setAccountName(dto.getAccountName());
-        u.setAccountTag(dto.getAccountTag());
         u.setAvatarPath(dto.getAvatarPath());
         u.setRole(dto.getRole());
         return u;
@@ -20,7 +19,6 @@ public class UserAccountMapper {
         UserAccountDTO dto = new UserAccountDTO();
         dto.setAccountId(u.getAccountId());
         dto.setAccountName(u.getAccountName());
-        dto.setAccountTag(u.getAccountTag());
         dto.setAvatarPath(u.getAvatarPath());
         dto.setRole(u.getRole());
         return dto;

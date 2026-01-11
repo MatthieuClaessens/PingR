@@ -7,7 +7,6 @@ import lombok.Data;
 public class UserAccountDTO {
         private Long accountId;
         private String accountName;
-        private String accountTag;
         private String avatarPath;
         public Role role;
 }
