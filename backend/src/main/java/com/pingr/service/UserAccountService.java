@@ -39,14 +39,18 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccountDTO createUserAccount(String accountName, String accountTag, String accountEmail, String password,
-            String avatarPath) {
+    public UserAccountDTO createUserAccount(String accountName, String accountEmail, String password, String avatarPath) {
+        if (userAccountRepository.existsByAccountName(accountName)) {
+            throw new IllegalArgumentException("This username is already in use.");
+        }
+        if (userAccountRepository.existsByAccountEmail(accountEmail)) {
+            throw new IllegalArgumentException("This email address is already in use.");
+        }
         UserAccount user = new UserAccount();
         user.setAccountName(accountName);
-        user.setAccountTag(accountTag);
-        user.setAccountEmail(accountEmail);
+        user.setAccountEmail(accountEmail.trim().toLowerCase());
         user.setAccountPassword(passwordEncoder.encode(password));
-        user.setAvatarPath(avatarPath);
+        user.setAvatarPath(avatarPath == null || avatarPath.isBlank() ? "default-avatar.png" : avatarPath);
         user.setRole(Role.USER);
 
         UserAccount saved = userAccountRepository.save(user);
@@ -68,7 +72,11 @@ public class UserAccountService {
             existing.setAccountName(dto.getAccountName().trim());
         }
         if (dto.getAvatarPath() != null) {
-            existing.setAvatarPath(dto.getAvatarPath());
+            if (dto.getAvatarPath().isBlank()) {
+                existing.setAvatarPath("default-avatar.png");
+            } else {
+                existing.setAvatarPath(dto.getAvatarPath());
+            }
         }
         return userAccountMapper.toDTO(userAccountRepository.save(existing));
     }

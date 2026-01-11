@@ -32,7 +32,7 @@ public class ConversationService {
 
     @Transactional(readOnly = true)
     public Page<ConversationDTO> getConversationsFromUserAccountId(Long accountId,
-            Pageable pageable) {
+                                                                   Pageable pageable) {
         return conversationRepository.findByUserAccounts_AccountId(accountId, pageable)
                 .map(conversationMapper::toDTO);
     }
@@ -49,16 +49,15 @@ public class ConversationService {
     }
 
     @Transactional
-    public ConversationDTO createConversation(Set<Long> accountIds, Long creatorId) {
+    public ConversationDTO createConversation(Set<Long> accountIds, Long accountId) {
         Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(accountIds));
-        accountIds.add(creatorId);
 
         if (userAccounts.size() != accountIds.size()) {
             throw new EntityNotFoundException("One or more users could not be found.");
         }
         if (userAccounts.size() == 2) {
             List<Conversation> existing = conversationRepository
-                    .findByUserAccounts_AccountIdAndConversationType(creatorId, ConversationType.SINGLE);
+                    .findByUserAccounts_AccountIdAndConversationType(accountId, ConversationType.SINGLE);
             for (Conversation conv : existing) {
                 if (conv.getUserAccounts().equals(userAccounts)) {
                     return conversationMapper.toDTO(conv);
@@ -66,7 +65,6 @@ public class ConversationService {
             }
         }
         Conversation conversation = new Conversation();
-        conversation.setCreatorId(creatorId);
         conversation.setConversationType(userAccounts.size() > 2 ? ConversationType.GROUP : ConversationType.SINGLE);
         conversation.setUserAccounts(userAccounts);
 
@@ -77,7 +75,7 @@ public class ConversationService {
     public void deleteConversation(Long conversationId, Long accountId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        if (!conversation.getCreatorId().equals(accountId)) {
+        if (!(conversation.getConversationType() == ConversationType.GROUP && accountId.equals(conversation.getCreatorId()))) {
             throw new IllegalArgumentException("Only the creator can delete this conversation.");
         }
         conversationRepository.delete(conversation);
@@ -99,27 +97,35 @@ public class ConversationService {
     public ConversationDTO addParticipant(Long conversationId, Long targetId, Long requesterId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
+
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException("Target user not found"));
+
+        if (conversation.getConversationType() == ConversationType.SINGLE) {
+            boolean isParticipant = conversation.getUserAccounts().stream()
+                    .anyMatch(u -> u.getAccountId().equals(requesterId));
+            if (!isParticipant) throw new SecurityException("You are not part of this DM");
+
+            Conversation newGroup = new Conversation();
+            newGroup.setConversationType(ConversationType.GROUP);
+            newGroup.setCreatorId(requesterId);
+
+            Set<UserAccount> userAccounts = new HashSet<>(conversation.getUserAccounts());
+            userAccounts.add(target);
+            newGroup.setUserAccounts(userAccounts);
+
+            return conversationMapper.toDTO(conversationRepository.save(newGroup));
+        }
+        if (!requesterId.equals(conversation.getCreatorId())) {
+            throw new IllegalArgumentException("Only the creator can add to a group");
+        }
         if (conversation.getUserAccounts().size() >= MAX_PARTICIPANTS) {
             throw new IllegalArgumentException("Maximum " + MAX_PARTICIPANTS + " members allowed");
         }
-        if (conversation.getConversationType() == ConversationType.GROUP) {
-            if (!requesterId.equals(conversation.getCreatorId())) {
-                throw new IllegalArgumentException("Only the creator can add to a group");
-            }
-        } else {
-            boolean isParticipant = conversation.getUserAccounts().stream()
-                    .anyMatch(u -> u.getAccountId().equals(requesterId));
-            if (!isParticipant) {
-                throw new SecurityException("You are not part of this conversation");
-            }
+        if (conversation.getUserAccounts().contains(target)) {
+            throw new IllegalArgumentException("Target user is already in this conversation");
         }
         conversation.getUserAccounts().add(target);
-        if (conversation.getUserAccounts().size() > 2) {
-            conversation.setConversationType(ConversationType.GROUP);
-        }
-
         return conversationMapper.toDTO(conversationRepository.save(conversation));
     }
 
@@ -129,7 +135,7 @@ public class ConversationService {
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        if (!requesterId.equals(conversation.getCreatorId())) {
+        if (!(conversation.getConversationType() == ConversationType.GROUP && requesterId.equals(conversation.getCreatorId()))) {
             throw new IllegalArgumentException("Only the creator can kick a participant");
         }
         conversation.getUserAccounts().remove(target);
@@ -148,7 +154,7 @@ public class ConversationService {
             conversationRepository.delete(conversation);
             return;
         }
-        if (conversation.getCreatorId().equals(accountId)) {
+        if (conversation.getConversationType() == ConversationType.GROUP && accountId.equals(conversation.getCreatorId())) {
             UserAccount nextCreatorId = conversation.getUserAccounts().stream()
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Conversation should not be empty"));

@@ -100,17 +100,22 @@ import java.time.LocalDateTime;
 
         @Transactional
         public MessageDTO editMessage(Long conversationId, Long messageId, Long requesterId, String updatedContent) {
+            Message message = messageRepository.findById(messageId)
+                    .orElseThrow (() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
+
+            if (!message.getConversation().getConversationId().equals(conversationId)) {
+                throw new IllegalArgumentException("Inconsistent conversation context");
+            }
+
+            if (!message.getUserAccount().getAccountId().equals(requesterId)) {
+                throw new SecurityException(NOT_AUTHOR);
+            }
+
             String cleanedContent = (updatedContent != null) ? updatedContent.trim() : "";
             if (cleanedContent.isEmpty() || cleanedContent.length() > 2000) {
                 throw new IllegalArgumentException("Message cannot be empty");
             }
 
-            Message message = messageRepository.findById(messageId)
-                    .orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
-
-            if (!message.getUserAccount().getAccountId().equals(requesterId)) {
-                throw new SecurityException("You are not the author of this message");
-            }
             message.setMessageContent(cleanedContent);
             return messageMapper.toDTO(messageRepository.save(message));
         }
