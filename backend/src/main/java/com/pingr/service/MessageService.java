@@ -120,20 +120,35 @@ import java.time.LocalDateTime;
             return messageMapper.toDTO(messageRepository.save(message));
         }
 
+/**
+ * Deletes a message from a conversation after performing necessary validations
+ *
+ * @param conversationId The ID of the conversation containing the message
+ * @param messageId The ID of the message to be deleted
+ * @param requesterId The ID of the user requesting the deletion
+ * @throws EntityNotFoundException If the message or user is not found
+ * @throws IllegalArgumentException If the conversation ID doesn't match
+ * @throws SecurityException If the requester is neither the author nor a privileged user
+ */
         @Transactional
         public void deleteMessage(Long conversationId, Long messageId, Long requesterId) {
+    // Find the message by ID, throw exception if not found
             Message message = messageRepository.findById(messageId)
                     .orElseThrow(() -> new EntityNotFoundException(MESSAGE_NOT_FOUND));
+    // Verify that the message belongs to the specified conversation
             if (!message.getConversation().getConversationId().equals(conversationId)) {
                 throw new IllegalArgumentException("Inconsistent conversation context");
             }
 
+    // Find the requester by ID, throw exception if not found
             UserAccount requester = userAccountRepository.findById(requesterId)
                     .orElseThrow (() -> new EntityNotFoundException(USER_NOT_FOUND));
 
+    // Check if requester is the message author or has privileged role
             boolean isAuthor = message.getUserAccount().getAccountId().equals(requesterId);
             boolean isPrivileged = requester.getRole() == Role.ADMIN || requester.getRole() == Role.MODERATOR;
 
+    // Delete only if requester is author or privileged, otherwise throw exception
             if (!isAuthor && !isPrivileged) {
                 throw new SecurityException(NOT_AUTHOR);
             }

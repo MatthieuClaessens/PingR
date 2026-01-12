@@ -95,16 +95,16 @@ public class UserAccountService {
         userAccountRepository.delete(target);
     }
 
-@Transactional
-public void changePassword(Long accountId, String currentPassword, String newPassword) {
-    UserAccount user = userAccountRepository.findById(accountId)
-            .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+    @Transactional
+    public void changePassword(Long accountId, String currentPassword, String newPassword) {
+        UserAccount user = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
 
-    if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
-        throw new IllegalArgumentException("Invalid current password");
+        if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
+            throw new IllegalArgumentException("Invalid current password");
+        }
+
+        user.setAccountPassword(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(user);
     }
-
-    user.setAccountPassword(passwordEncoder.encode(newPassword));
-    userAccountRepository.save(user);
-}
 }

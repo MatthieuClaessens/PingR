@@ -75,7 +75,8 @@ public class ConversationService {
     public void deleteConversation(Long conversationId, Long accountId) {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
-        if (!(conversation.getConversationType() == ConversationType.GROUP && accountId.equals(conversation.getCreatorId()))) {
+        if (!(conversation.getConversationType() == ConversationType.GROUP
+                && accountId.equals(conversation.getCreatorId()))) || accountId.getRole(). {
             throw new IllegalArgumentException("Only the creator can delete this conversation.");
         }
         conversationRepository.delete(conversation);

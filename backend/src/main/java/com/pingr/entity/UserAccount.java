@@ -21,9 +21,6 @@ public class UserAccount {
     @Column(nullable = false, length = 20)
     private String accountName;
 
-    @Column(nullable = false, unique = true, length = 4)
-    private String accountTag;
-
     @Column(nullable = false, unique = true, length = 100)
     private String accountEmail;
 
