@@ -82,23 +82,29 @@ public class UserAccountService {
     }
 
     @Transactional
-    public void deleteUserAccount(Long accountId) {
-        if (!userAccountRepository.existsById(accountId)) {
-            throw new EntityNotFoundException(USER_NOT_FOUND + accountId);
+    public void deleteUserAccount(Long accountId, Long requesterId) {
+        UserAccount target = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        UserAccount requester = userAccountRepository.findById(requesterId)
+                .orElseThrow(() -> new EntityNotFoundException("Requester not found"));
+        boolean isRequester = requesterId.equals(accountId);
+        boolean isPrivileged = requester.getRole() == Role.ADMIN || requester.getRole() == Role.MODERATOR;
+        if (!(isRequester || isPrivileged)) {
+            throw new SecurityException("You are not allowed to delete this user");
         }
-        userAccountRepository.deleteById(accountId);
+        userAccountRepository.delete(target);
     }
 
-    @Transactional
-    public void changePassword(Long accountId, String currentPassword, String newPassword) {
-        UserAccount user = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+@Transactional
+public void changePassword(Long accountId, String currentPassword, String newPassword) {
+    UserAccount user = userAccountRepository.findById(accountId)
+            .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
 
-        if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
-            throw new IllegalArgumentException("Invalid current password");
-        }
-
-        user.setAccountPassword(passwordEncoder.encode(newPassword));
-        userAccountRepository.save(user);
+    if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
+        throw new IllegalArgumentException("Invalid current password");
     }
+
+    user.setAccountPassword(passwordEncoder.encode(newPassword));
+    userAccountRepository.save(user);
+}
 }
