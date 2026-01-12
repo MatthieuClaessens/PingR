@@ -23,7 +23,7 @@ public class UserAccountService {
     private final PasswordEncoder passwordEncoder;
     private final UserAccountMapper userAccountMapper;
 
-    private static final String USER_NOT_FOUND = "User not found with ID: ";
+    private static final String USER_NOT_FOUND = "User not found";
 
     @Transactional(readOnly = true)
     public List<UserAccountDTO> getAllUsers() {
@@ -46,6 +46,7 @@ public class UserAccountService {
         if (userAccountRepository.existsByAccountEmail(accountEmail)) {
             throw new IllegalArgumentException("This email address is already in use.");
         }
+
         UserAccount user = new UserAccount();
         user.setAccountName(accountName);
         user.setAccountEmail(accountEmail.trim().toLowerCase());
@@ -60,14 +61,25 @@ public class UserAccountService {
     @Transactional(readOnly = true)
     public UserAccountDTO getUserAccountById(Long accountId) {
         UserAccount existing = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
         return userAccountMapper.toDTO(existing);
     }
 
     @Transactional
-    public UserAccountDTO editUserAccount(Long accountId, UserAccountDTO dto) {
+    public UserAccountDTO editUserAccount(Long accountId, Long requesterId, UserAccountDTO dto) {
         UserAccount existing = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        UserAccount requester = userAccountRepository.findById(requesterId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        boolean isSelfEdit = requesterId.equals(accountId);
+        boolean isPrivileged = requester.getRole() == Role.ADMIN || requester.getRole() == Role.MODERATOR;
+
+        if (!isSelfEdit && !isPrivileged) {
+            throw new SecurityException("You are not allowed to edit this user");
+        }
+
         if (dto.getAccountName() != null && !dto.getAccountName().trim().isEmpty()) {
             existing.setAccountName(dto.getAccountName().trim());
         }
@@ -78,6 +90,7 @@ public class UserAccountService {
                 existing.setAvatarPath(dto.getAvatarPath());
             }
         }
+
         return userAccountMapper.toDTO(userAccountRepository.save(existing));
     }
 
@@ -85,20 +98,24 @@ public class UserAccountService {
     public void deleteUserAccount(Long accountId, Long requesterId) {
         UserAccount target = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
         UserAccount requester = userAccountRepository.findById(requesterId)
-                .orElseThrow(() -> new EntityNotFoundException("Requester not found"));
-        boolean isRequester = requesterId.equals(accountId);
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        boolean isSelfDelete = requesterId.equals(accountId);
         boolean isPrivileged = requester.getRole() == Role.ADMIN || requester.getRole() == Role.MODERATOR;
-        if (!(isRequester || isPrivileged)) {
+
+        if (!isSelfDelete && !isPrivileged) {
             throw new SecurityException("You are not allowed to delete this user");
         }
+
         userAccountRepository.delete(target);
     }
 
     @Transactional
     public void changePassword(Long accountId, String currentPassword, String newPassword) {
         UserAccount user = userAccountRepository.findById(accountId)
-                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND + accountId));
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
         if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
             throw new IllegalArgumentException("Invalid current password");

@@ -1,4 +1,4 @@
-package com.pingr.config;
+package com.pingr.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
