@@ -1,6 +1,6 @@
 package com.pingr.service;
 
-import com.pingr.dto.LoginDTO;
+import com.pingr.dto.auth.LoginDTO;
 import com.pingr.entity.UserAccount;
 import com.pingr.repository.UserAccountRepository;
 import lombok.RequiredArgsConstructor;
