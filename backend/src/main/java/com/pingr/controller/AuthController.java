@@ -1,7 +1,7 @@
 package com.pingr.controller;
-
-import com.pingr.dto.LoginDTO;
+;
 import com.pingr.dto.UserAccountDTO;
+import com.pingr.dto.auth.LoginDTO;
 import com.pingr.dto.auth.RegisterDTO;
 import com.pingr.entity.UserAccount;
 import com.pingr.security.JwtService;
@@ -28,7 +28,7 @@ public class AuthController {
     private final JwtService jwtService;
 
     @PostMapping("/login")
-    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody LoginDTO dto) {
+    public ResponseEntity<Map<String, String>> login(@Valid @RequestBody com.pingr.dto.auth.LoginDTO dto) {
         UserAccount userAccount = authService.authenticate(dto)
                 .orElseThrow(() -> new BadCredentialsException("Identifiants incorrects"));
 

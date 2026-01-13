@@ -13,7 +13,13 @@ public class UserAccountController {
 
     private final UserAccountService service;
 
-    public UserAccountDTO createUserAccount(@Valid @RequestBody UserAccountDTO request) {
-        return service.createUserAccount(request);
+    @PostMapping
+    public UserAccountDTO createUserAccount(@Valid @RequestBody UserAccountDTO dto) {
+        return createUserAccount(
+                dto.getAccountName(),
+                dto.getAccountEmail(),
+                dto.getAccountPassword(),
+                dto.getAvatarPath()
+        )
     }
 }
