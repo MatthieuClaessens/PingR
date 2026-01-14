@@ -1,5 +1,4 @@
 package com.pingr.controller;
-;
 import com.pingr.dto.UserAccountDTO;
 import com.pingr.dto.auth.LoginDTO;
 import com.pingr.dto.auth.RegisterDTO;
