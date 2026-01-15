@@ -113,15 +113,28 @@ public class UserAccountService {
     }
 
     @Transactional
-    public void changePassword(Long accountId, String currentPassword, String newPassword) {
-        UserAccount user = userAccountRepository.findById(accountId)
+    public void changePassword(Long accountId, String accountPassword, String newPassword) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        if (!passwordEncoder.matches(currentPassword, user.getAccountPassword())) {
+        if (!passwordEncoder.matches(accountPassword, userAccount.getAccountPassword())) {
             throw new IllegalArgumentException("Invalid current password");
         }
+        userAccount.setAccountPassword(passwordEncoder.encode(newPassword));
+        userAccountRepository.save(userAccount);
+    }
 
-        user.setAccountPassword(passwordEncoder.encode(newPassword));
-        userAccountRepository.save(user);
+    @Transactional
+    public void changeMail(Long accountId, String accountEmail, String newEmail, String accountPassword) {
+        UserAccount userAccount = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+        if (!userAccount.getAccountEmail().equals(accountEmail)) {
+            throw new IllegalArgumentException("Invalid current mail address");
+        }
+        if (!passwordEncoder.matches(accountPassword, userAccount.getAccountPassword())) {
+            throw new IllegalArgumentException("Invalid current password");
+        }
+        userAccount.setAccountEmail(newEmail);
+        userAccountRepository.save(userAccount);
     }
 }

@@ -15,10 +15,5 @@ public class UserAccountController {
     private final UserAccountService service;
 
     @PostMapping
-    public UserAccountDTO createUserAccount(@Valid @RequestBody UserAccountDTO userAccountDTO) {
-        return createUserAccount(
-                userAccountDTO.getAccountName(),
-                userAccountDTO.getAccountName(),
-                userAccountDTO.getAvatarPath());
-    }
+
 }

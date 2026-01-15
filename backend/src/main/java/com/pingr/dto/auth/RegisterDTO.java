@@ -17,7 +17,7 @@ public class RegisterDTO {
     private String accountEmail;
 
     @NotNull
-    @Size(min = 6, message = "Password must have minimum 6 characters")
+    @Size(min = 10, message = "Password must have minimum 10 characters")
     private String password;
 
     private String avatarPath;
