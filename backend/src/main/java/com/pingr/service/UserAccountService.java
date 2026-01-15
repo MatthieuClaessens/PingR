@@ -1,6 +1,8 @@
 package com.pingr.service;
 
 import com.pingr.dto.UserAccountDTO;
+import com.pingr.dto.auth.ChangeMailDTO;
+import com.pingr.dto.auth.ChangePasswordDTO;
 import com.pingr.entity.Role;
 import com.pingr.entity.UserAccount;
 import com.pingr.mapper.UserAccountMapper;
@@ -113,28 +115,33 @@ public class UserAccountService {
     }
 
     @Transactional
-    public void changePassword(Long accountId, String accountPassword, String newPassword) {
+    public void changePassword(Long accountId, ChangePasswordDTO changePasswordDTO) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-
-        if (!passwordEncoder.matches(accountPassword, userAccount.getAccountPassword())) {
+        if (!userAccount.getAccountEmail().equals(changePasswordDTO.getAccountEmail())) {
+            throw new IllegalArgumentException("Email does not match this account");
+        }
+        if (!passwordEncoder.matches(changePasswordDTO.getAccountPassword(), userAccount.getAccountPassword())) {
             throw new IllegalArgumentException("Invalid current password");
         }
-        userAccount.setAccountPassword(passwordEncoder.encode(newPassword));
+        userAccount.setAccountPassword(passwordEncoder.encode(changePasswordDTO.getNewPassword()));
         userAccountRepository.save(userAccount);
     }
 
     @Transactional
-    public void changeMail(Long accountId, String accountEmail, String newEmail, String accountPassword) {
+    public void changeMail(Long accountId, ChangeMailDTO changeMailDTO) {
         UserAccount userAccount = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
-        if (!userAccount.getAccountEmail().equals(accountEmail)) {
-            throw new IllegalArgumentException("Invalid current mail address");
-        }
-        if (!passwordEncoder.matches(accountPassword, userAccount.getAccountPassword())) {
+
+        if (!passwordEncoder.matches(changeMailDTO.getAccountPassword(), userAccount.getAccountPassword())) {
             throw new IllegalArgumentException("Invalid current password");
         }
-        userAccount.setAccountEmail(newEmail);
+
+        if (userAccountRepository.existsByAccountEmail(changeMailDTO.getNewEmail())) {
+            throw new IllegalArgumentException("This email address is already in use");
+        }
+
+        userAccount.setAccountEmail(changeMailDTO.getNewEmail());
         userAccountRepository.save(userAccount);
     }
 }

@@ -2,7 +2,9 @@ package com.pingr.dto.auth;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
+import lombok.Data;
 
+@Data
 public class ChangeMailDTO {
     @NotNull
     @Email(message = "Invalid email")
