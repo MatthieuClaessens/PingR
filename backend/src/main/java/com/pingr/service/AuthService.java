@@ -1,6 +1,7 @@
 package com.pingr.service;
 
 import com.pingr.dto.UserAccountDTO;
+import com.pingr.dto.auth.AuthResponseDTO;
 import com.pingr.dto.auth.LoginDTO;
 import com.pingr.dto.auth.RegisterDTO;
 import com.pingr.entity.UserAccount;
@@ -24,17 +25,16 @@ public class AuthService {
     private final UserAccountMapper userAccountMapper;
     private final JwtService jwtService;
 
-    public UserAccountDTO authenticate(LoginDTO loginDTO) {
-        UserAccountDTO userAccountDTO = userAccountMapper.toDTO(userAccount);
+    public AuthResponseDTO authenticate(LoginDTO loginDTO) {
         UserAccount userAccount = userAccountRepository.findByAccountEmail(loginDTO.getAccountEmail())
-                .filter(userAccount -> passwordEncoder.matches(loginDTO.getPassword(), userAccount.getAccountPassword()))
+                .filter(u -> passwordEncoder.matches(loginDTO.getPassword(), u.getAccountPassword()))
                 .orElseThrow(() -> new SecurityException("Invalid credentials"));
-        String token = jwtService.generateToken(userAccount.getAccountEmail(), userAccount.getAccountId();
         UserAccountDTO userAccountDTO = userAccountMapper.toDTO(userAccount);
-        return new UserAccountDTO(userAccountDTO, token);
+        String token = jwtService.generateToken(userAccount);
+        return new AuthResponseDTO(userAccountDTO, token);
     }
 
-    public UserAccountDTO register(RegisterDTO registerDTO) {
+    public AuthResponseDTO register(RegisterDTO registerDTO) {
         if (userAccountRepository.existsByAccountEmail(registerDTO.getAccountEmail())) {
             throw new SecurityException("This email address is already in use.");
         }
@@ -42,10 +42,14 @@ public class AuthService {
             throw new SecurityException("This username is already in use.");
         }
 
-        return userAccountService.createUserAccount(
+        UserAccountDTO userAccountDTO = userAccountService.createUserAccount (
                 registerDTO.getAccountName(),
                 registerDTO.getAccountEmail(),
                 registerDTO.getPassword(),
                 registerDTO.getAvatarPath());
+        UserAccount userAccount = userAccountRepository.findByAccountEmail(registerDTO.getAccountEmail())
+                .orElseThrow(() -> new RuntimeException("User not found after creation"));
+        String token = jwtService.generateToken(userAccount);
+        return new AuthResponseDTO(userAccountDTO, token);
     }
 }
