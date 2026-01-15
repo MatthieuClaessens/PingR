@@ -2,7 +2,6 @@ package com.pingr.controller;
 
 import com.pingr.dto.UserAccountDTO;
 import com.pingr.dto.auth.ChangePasswordDTO;
-import com.pingr.dto.auth.userAccountDTO;
 import com.pingr.service.UserAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +25,7 @@ public class UserAccountController {
             @PathVariable Long accountId,
             @Valid @RequestBody ChangePasswordDTO changePasswordDTO
             ) {
-        userAccountService.changePassword(accountId, accountId, changePasswordDTO)
-    }
+//        userAccountService.changePassword(accountId, accountId, changePasswordDTO);
+//    }
 
 }
