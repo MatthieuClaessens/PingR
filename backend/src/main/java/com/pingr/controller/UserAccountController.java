@@ -1,6 +1,7 @@
 package com.pingr.controller;
 
 import com.pingr.dto.UserAccountDTO;
+import com.pingr.dto.auth.userAccountDTO;
 import com.pingr.service.UserAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -14,12 +15,10 @@ public class UserAccountController {
     private final UserAccountService service;
 
     @PostMapping
-    public UserAccountDTO createUserAccount(@Valid @RequestBody UserAccountDTO dto) {
+    public UserAccountDTO createUserAccount(@Valid @RequestBody UserAccountDTO userAccountDTO) {
         return createUserAccount(
-                dto.getAccountName(),
-                dto.getAccountEmail(),
-                dto.getAccountPassword(),
-                dto.getAvatarPath()
-        )
+                userAccountDTO.getAccountName(),
+                userAccountDTO.getAccountName(),
+                userAccountDTO.getAvatarPath());
     }
 }
