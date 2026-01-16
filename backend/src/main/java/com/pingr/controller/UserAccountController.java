@@ -15,17 +15,16 @@ public class UserAccountController {
 
     private final UserAccountService userAccountService;
 
-    @GetMapping("/{id}")
+    @GetMapping("/{accountId}")
     public ResponseEntity<UserAccountDTO> getUserAccountById(@PathVariable Long accountId) {
         return ResponseEntity.ok(userAccountService.getUserAccountById(accountId));
     }
 
-    @PatchMapping("/{id}/changePassword")
+    @PatchMapping("/{accoundId}/changePassword")
     public ResponseEntity<Void> changePassword(
             @PathVariable Long accountId,
-            @Valid @RequestBody ChangePasswordDTO changePasswordDTO
-            ) {
-//        userAccountService.changePassword(accountId, accountId, changePasswordDTO);
-//    }
-
+            @Valid @RequestBody ChangePasswordDTO changePasswordDTO) {
+            userAccountService.changePassword(accountId, changePasswordDTO);
+            return ResponseEntity.noContent().build();
+    }
 }
