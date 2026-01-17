@@ -2,11 +2,13 @@ package com.pingr.controller;
 
 import com.pingr.dto.MessageDTO;
 import com.pingr.service.MessageService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -19,9 +21,10 @@ public class MessageController {
     @GetMapping
     public ResponseEntity<Page<MessageDTO>> getMessages(
             @PathVariable Long conversationId,
-            @RequestParam Long requesterId,
+            Authentication authentication,
             @PageableDefault(size = 20, sort = "messageDate") Pageable pageable
     ) {
+        Long requesterId = (Long) authentication.getPrincipal();
         Page<MessageDTO> messages = messageService
                 .getMessagesByConversationId(conversationId, requesterId, pageable);
         return ResponseEntity.ok(messages);
@@ -31,8 +34,9 @@ public class MessageController {
     public ResponseEntity<MessageDTO> getMessage(
             @PathVariable Long conversationId,
             @PathVariable Long messageId,
-            @RequestParam Long requesterId
+            Authentication authentication
     ) {
+        Long requesterId = (Long) authentication.getPrincipal();
         MessageDTO message = messageService
                 .getMessageById(conversationId, messageId, requesterId);
         return ResponseEntity.ok(message);
@@ -41,11 +45,12 @@ public class MessageController {
     @PostMapping
     public ResponseEntity<MessageDTO> createMessage(
             @PathVariable Long conversationId,
-            @RequestParam Long accountId,
-            @RequestBody String content
+            Authentication authentication,
+            @Valid @RequestBody MessageDTO messageDTO
     ) {
+        Long accountId = (Long) authentication.getPrincipal();
         MessageDTO created = messageService
-                .createMessage(conversationId, accountId, content);
+                .createMessage(conversationId, accountId, messageDTO.getMessageContent());
         return ResponseEntity.status(201).body(created);
     }
 
@@ -53,11 +58,12 @@ public class MessageController {
     public ResponseEntity<MessageDTO> editMessage(
             @PathVariable Long conversationId,
             @PathVariable Long messageId,
-            @RequestParam Long requesterId,
-            @RequestBody String updatedContent
+            Authentication authentication,
+            @Valid @RequestBody MessageDTO messageDTO
     ) {
+        Long requesterId = (Long) authentication.getPrincipal();
         MessageDTO updated = messageService
-                .editMessage(conversationId, messageId, requesterId, updatedContent);
+                .editMessage(conversationId, messageId, requesterId, messageDTO.getUpdatedContent());
         return ResponseEntity.ok(updated);
     }
 
@@ -65,8 +71,9 @@ public class MessageController {
     public ResponseEntity<Void> deleteMessage(
             @PathVariable Long conversationId,
             @PathVariable Long messageId,
-            @RequestParam Long requesterId
+            Authentication authentication
     ) {
+        Long requesterId = (Long) authentication.getPrincipal();
         messageService.deleteMessage(conversationId, messageId, requesterId);
         return ResponseEntity.noContent().build();
     }
