@@ -3,27 +3,49 @@ package com.pingr.controller;
 import com.pingr.dto.UserAccountDTO;
 import com.pingr.dto.auth.ChangeMailDTO;
 import com.pingr.dto.auth.ChangePasswordDTO;
+import com.pingr.dto.auth.RegisterDTO;
 import com.pingr.entity.Role;
 import com.pingr.service.UserAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/user")
+@RequestMapping("/api/")
 @RequiredArgsConstructor
 public class UserAccountController {
 
     private final UserAccountService userAccountService;
 
-    @GetMapping("/{accountId}")
+    @GetMapping("/user/{accountId}")
     public ResponseEntity<UserAccountDTO> getUserAccountById(@PathVariable Long accountId) {
         return ResponseEntity.ok(userAccountService.getUserAccountById(accountId));
     }
 
-    @PatchMapping("/{accountId}")
+    @GetMapping("/users")
+    public ResponseEntity<List<UserAccountDTO>> getAllUsers() {
+        List<UserAccountDTO> userAccounts = userAccountService.getAllUsers();
+        return ResponseEntity.ok(userAccounts);
+    }
+
+    @PostMapping("/user/create")
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<UserAccountDTO> createUserAccount(@Valid @RequestBody RegisterDTO registerDTO) {
+        UserAccountDTO created = userAccountService.createUserAccount(
+                registerDTO.getAccountName(),
+                registerDTO.getAccountEmail(),
+                registerDTO.getPassword(),
+                registerDTO.getAvatarPath()
+        );
+        return ResponseEntity.status(201).body(created);
+    }
+
+    @PatchMapping("/user/{accountId}")
     public ResponseEntity<UserAccountDTO> editUserAccount(
             @PathVariable Long accountId,
             @Valid @RequestBody UserAccountDTO userAccountDTO,
@@ -33,7 +55,7 @@ public class UserAccountController {
             return ResponseEntity.ok(updated);
     }
 
-    @PatchMapping("/{targetId}/role")
+    @PatchMapping("/user/{targetId}/role")
     public ResponseEntity<UserAccountDTO> changeRole(
             @PathVariable Long targetId,
             @RequestBody Role newRole,
@@ -44,7 +66,7 @@ public class UserAccountController {
         return ResponseEntity.ok(updated);
     }
 
-    @PatchMapping("/{accountId}/changePassword")
+    @PatchMapping("/user/{accountId}/changePassword")
     public ResponseEntity<Void> changePassword(
             @PathVariable Long accountId,
             @Valid @RequestBody ChangePasswordDTO changePasswordDTO,
@@ -57,7 +79,7 @@ public class UserAccountController {
             return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{accountId}/change-email")
+    @PatchMapping("/user/{accountId}/change-email")
     public ResponseEntity<Void> changeMail(
             @PathVariable Long accountId,
             @Valid @RequestBody ChangeMailDTO changeMailDTO,
@@ -70,7 +92,7 @@ public class UserAccountController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/{accountId}")
+    @DeleteMapping("/user/{accountId}")
     public ResponseEntity<Void> deleteUserAccount(
             @PathVariable Long accountId,
             Authentication authentication) {
