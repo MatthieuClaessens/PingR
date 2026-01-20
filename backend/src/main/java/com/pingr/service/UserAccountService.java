@@ -68,6 +68,20 @@ public class UserAccountService {
     }
 
     @Transactional
+    public UserAccountDTO changeRole(Long accountId, Long targetId, Role newRole) {
+        UserAccount requester = userAccountRepository.findById(accountId)
+                .orElseThrow(() -> new EntityNotFoundException("Requester not found"));
+        if (requester.getRole() != Role.ADMIN) {
+            throw new SecurityException("Only administrators can change roles");
+        }
+        UserAccount target = userAccountRepository.findById(targetId)
+                .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
+
+        target.setRole(newRole);
+        return userAccountMapper.toDTO(target);
+    }
+
+    @Transactional
     public UserAccountDTO editUserAccount(Long accountId, Long requesterId, UserAccountDTO dto) {
         UserAccount existing = userAccountRepository.findById(accountId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));

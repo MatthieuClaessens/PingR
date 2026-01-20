@@ -3,6 +3,7 @@ package com.pingr.controller;
 import com.pingr.dto.UserAccountDTO;
 import com.pingr.dto.auth.ChangeMailDTO;
 import com.pingr.dto.auth.ChangePasswordDTO;
+import com.pingr.entity.Role;
 import com.pingr.service.UserAccountService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +31,17 @@ public class UserAccountController {
             Long requesterId = (Long) authentication.getPrincipal();
             UserAccountDTO updated = userAccountService.editUserAccount(accountId, requesterId, userAccountDTO);
             return ResponseEntity.ok(updated);
+    }
+
+    @PatchMapping("/{targetId}/role")
+    public ResponseEntity<UserAccountDTO> changeRole(
+            @PathVariable Long targetId,
+            @RequestBody Role newRole,
+            Authentication authentication
+    ) {
+        Long requesterId = (Long) authentication.getPrincipal();
+        UserAccountDTO updated = userAccountService.changeRole(requesterId, targetId, newRole);
+        return ResponseEntity.ok(updated);
     }
 
     @PatchMapping("/{accountId}/changePassword")
