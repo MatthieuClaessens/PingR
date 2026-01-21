@@ -22,12 +22,9 @@ public class UserAccountController {
 
     private final UserAccountService userAccountService;
 
-    @GetMapping("/user/{accountId}")
-    public ResponseEntity<UserAccountDTO> getUserAccountById(@PathVariable Long accountId) {
-        return ResponseEntity.ok(userAccountService.getUserAccountById(accountId));
-    }
 
     @GetMapping("/users")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<List<UserAccountDTO>> getAllUsers() {
         List<UserAccountDTO> userAccounts = userAccountService.getAllUsers();
         return ResponseEntity.ok(userAccounts);
@@ -55,7 +52,20 @@ public class UserAccountController {
             return ResponseEntity.ok(updated);
     }
 
+    @GetMapping("/user/me")
+    public ResponseEntity<UserAccountDTO> getMyProfile(Authentication authentication) {
+        Long accountId = (Long) authentication.getPrincipal();
+        return ResponseEntity.ok(userAccountService.getUserAccountById(accountId));
+    }
+
+    @GetMapping("/user/{targetId}")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    public ResponseEntity<UserAccountDTO> getUserProfile(@PathVariable Long targetId) {
+        return ResponseEntity.ok(userAccountService.getUserAccountById(targetId));
+    }
+
     @PatchMapping("/user/{targetId}/role")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<UserAccountDTO> changeRole(
             @PathVariable Long targetId,
             @RequestBody Role newRole,

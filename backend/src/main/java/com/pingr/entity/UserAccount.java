@@ -27,7 +27,7 @@ public class UserAccount {
     @Column(nullable = false, length = 60)
     private String accountPassword;
 
-    @Column(nullable = false, length = 500)
+    @Column(name = "avatar_path", nullable = false, length = 500)
     private String avatarPath;
 
     @Enumerated(EnumType.STRING)
