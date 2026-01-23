@@ -2,6 +2,10 @@
 
 import React from 'react';
 
+type AuthMode = {
+  mode: 'login' | 'register' | 'forgot';
+}
+
 export default function AuthenticationForm() {
   return (
     <main>

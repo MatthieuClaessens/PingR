@@ -5,6 +5,7 @@ import bgPattern from '../../assets/images/svg/background.svg';
 import Wave from '../../assets/images/svg/wave.svg';
 import AuthenticationForm from '../../components/auth/AuthenticationForm';
 
+
 export default function AuthenticationPage() {
   return (
     <main
@@ -30,6 +31,24 @@ export default function AuthenticationPage() {
           className="w-full h-auto min-h-[100px] object-cover"
         />
       </div>
+<footer className="absolute bottom-4 left-0 w-full z-20">
+  <p className="flex items-center justify-center flex-wrap gap-4 text-[#EEEEEE] opacity-40 text-[12px] tracking-widest uppercase text-center">
+    <span>© 2026 PingR</span>
+    <span className="opacity-50">—</span>
+    <a href="#" className="hover:text-black transition">
+      Mentions légales
+    </a>
+    <span className="opacity-50">—</span>
+<a 
+  href="https://matthieuclaessens.vercel.app/" 
+  target="_blank" 
+  rel="noopener noreferrer"
+  className="hover:text-[#EF3C56] transition"
+>
+  By Matthieu CLAESSENS
+</a>
+  </p>
+</footer>
     </main>
   );
 }
