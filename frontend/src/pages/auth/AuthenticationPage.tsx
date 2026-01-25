@@ -9,17 +9,15 @@ import RegistrationForm from "../../components/auth/RegistrationForm"
 import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm';
 import { useState } from 'react';
 
+const validateEmail = (email: string) => email.includes('@') && email.length > 5;
+const validatePassword = (pass: string) => pass.length >= 10;
+
 
 export default function AuthenticationPage() {
   const [mode, setMode] = useState('login');
   return (
     <main
       className="relative flex items-center justify-center min-h-screen w-full bg-[#1E1E1E] overflow-hidden"
-    // style={{
-    //   backgroundImage: `url(${bgPattern})`,
-    //   backgroundRepeat: 'repeat',
-    //   backgroundSize: '150px 80px'
-    // }}
     >
       <div className="absolute top-8 left-10 z-20">
         <h3 className="font-['Salsa'] text-5xl text-[#EEEEEE] hover:scale-105 transition duration-300">
@@ -35,7 +33,9 @@ export default function AuthenticationPage() {
             {(() => {
               switch (mode) {
                 case 'login':
-                  return <LoginForm setMode={setMode} />;
+                  return <LoginForm setMode={setMode} 
+                  checkEmail={validateEmail} checkPass={validatePassword}
+                  onAuthSuccess={handleAuthSuccess}/>
                 case 'register':
                   return <RegistrationForm setMode={setMode} />;
                 case 'forgotpassword':
