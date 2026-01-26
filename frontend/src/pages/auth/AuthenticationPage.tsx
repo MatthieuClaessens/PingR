@@ -1,9 +1,7 @@
 "use client";
 
 import React from 'react';
-import bgPattern from '../../assets/images/svg/background.svg';
 import Wave from '../../assets/images/svg/wave.svg';
-import { AtSign, LockKeyhole } from "lucide-react";
 import LoginForm from "../../components/auth/LoginForm"
 import RegistrationForm from "../../components/auth/RegistrationForm"
 import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm';
@@ -35,7 +33,7 @@ export default function AuthenticationPage() {
                 case 'login':
                   return <LoginForm setMode={setMode} 
                   checkEmail={validateEmail} checkPass={validatePassword}
-                  onAuthSuccess={handleAuthSuccess}/>
+                  onAuthSuccess={""}/>
                 case 'register':
                   return <RegistrationForm setMode={setMode} />;
                 case 'forgotpassword':
