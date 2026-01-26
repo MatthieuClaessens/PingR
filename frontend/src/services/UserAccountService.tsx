@@ -1,9 +1,8 @@
-import apiClient from "./http-common";
+import http from "../http-common";
 
-interface UserData {
-  accountName: string;
-  accountEmail: string;
-  accountPassword: string;
-  accountId: 
-
-}
+export const login = (accountEmail: string, accountPassword: string) => {
+  return http.post("/auth/login", {
+    accountEmail,
+    password: accountPassword
+  });
+};
