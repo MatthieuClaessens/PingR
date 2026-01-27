@@ -32,8 +32,7 @@ export default function AuthenticationPage() {
               switch (mode) {
                 case 'login':
                   return <LoginForm setMode={setMode} 
-                  checkEmail={validateEmail} checkPass={validatePassword}
-                  onAuthSuccess={""}/>
+                  checkEmail={validateEmail} checkPass={validatePassword}/>
                 case 'register':
                   return <RegistrationForm setMode={setMode} />;
                 case 'forgotpassword':
