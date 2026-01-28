@@ -6,13 +6,16 @@ import LoginForm from "../../components/auth/LoginForm"
 import RegistrationForm from "../../components/auth/RegistrationForm"
 import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm';
 import { useState } from 'react';
+import { useNavigate } from "react-router-dom";
 
 const validateEmail = (email: string) => email.includes('@') && email.length > 5;
 const validatePassword = (pass: string) => pass.length >= 10;
 
-
 export default function AuthenticationPage() {
-  const [mode, setMode] = useState('login');
+  const [mode, setMode] = useState<'login' | 'register' | 'forgotpassword'>('login');
+  const navigate = useNavigate();
+  const navigationAfterAuth = () => navigate('/app');
+
   return (
     <main
       className="relative flex items-center justify-center min-h-screen w-full bg-[#1E1E1E] overflow-hidden"
@@ -31,14 +34,18 @@ export default function AuthenticationPage() {
             {(() => {
               switch (mode) {
                 case 'login':
-                  return <LoginForm setMode={setMode} 
-                  checkEmail={validateEmail} checkPass={validatePassword}/>
+                  return (
+                    <LoginForm
+                      setMode={setMode}
+                      onLoginSuccess={navigationAfterAuth}
+                    />
+                  );
                 case 'register':
                   return <RegistrationForm setMode={setMode} />;
                 case 'forgotpassword':
                   return <ForgotPasswordForm setMode={setMode} />;
                 default:
-                  return <LoginForm setMode={setMode} />;
+                  return <LoginForm setMode={setMode} onLoginSuccess={navigationAfterAuth} />;
               }
             })()}
           </div>
