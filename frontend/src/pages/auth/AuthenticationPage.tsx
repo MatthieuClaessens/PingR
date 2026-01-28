@@ -14,7 +14,7 @@ const validatePassword = (pass: string) => pass.length >= 10;
 export default function AuthenticationPage() {
   const [mode, setMode] = useState<'login' | 'register' | 'forgotpassword'>('login');
   const navigate = useNavigate();
-  const navigationAfterAuth = () => navigate('/app');
+  const navigationAfterAuth = () => navigate('/home');
 
   return (
     <main
