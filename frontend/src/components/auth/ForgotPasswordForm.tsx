@@ -19,8 +19,6 @@ export default function ForgotPasswordForm({ setMode }: ForgotPasswordFormProps)
     setLoading(true);
 
     try {
-      // Simulation ou appel réel si ton endpoint existe
-      // await http.post("/auth/forgot-password", { accountEmail: email });
       
       setMessage({ 
         content: "Si cet email existe, un lien de récupération a été envoyé.", 
@@ -43,7 +41,6 @@ export default function ForgotPasswordForm({ setMode }: ForgotPasswordFormProps)
         Donne-nous ton mail et on t'envoie un lien de récupération.
       </p>
 
-      {/* Zone de message (Erreur ou Succès) */}
       <div className="h-12 mt-2 flex items-center justify-center">
         {message.content && (
           <p className={`text-sm font-medium px-4 ${message.isError ? 'text-[#EF3C56]' : 'text-green-400'}`}>

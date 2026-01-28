@@ -30,7 +30,6 @@ export default function LoginForm({ setMode, onLoginSuccess }: LoginFormProps) {
         onLoginSuccess(response.data);
       }
     } catch (err: any) {
-      // Si le back renvoie 401 (Unauthorized), c'est que les IDs sont faux
       if (err.response?.status === 401) {
         setError("Email ou mot de passe incorrect.");
       } else {
@@ -47,7 +46,6 @@ export default function LoginForm({ setMode, onLoginSuccess }: LoginFormProps) {
       <h2 className="text-[#EEEEEE] font-bold text-2xl mt-5">Bienvenue !</h2>
       <p className="text-[#979797]">Ravi de te revoir parmi nous !</p>
 
-      {/* Zone d'erreur identique à RegistrationForm */}
       <div className="h-6 mt-2">
         {error && (
           <p className="text-[#EF3C56] text-sm font-medium animate-pulse">
