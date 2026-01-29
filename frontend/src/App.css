@@ -4,3 +4,8 @@
   font-family: "Salsa";
   src: url("/font/Salsa-Regular.ttf") format("truetype");
 }
+
+@font-face {
+  font-family: "Onest";
+  src: url("/font/Onest.ttf") format("truetype");
+}
