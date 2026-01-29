@@ -6,7 +6,7 @@ import { MessageCirclePlus, MessageCircle, UserPlus, EllipsisVertical, Users, Hi
 type ViewMode = 'contacts' | 'recent';
 
 export default function Contacts() {
-  const [view, setView] = useState<ViewMode>('contacts');
+  const [view, setView] = useState<ViewMode>('recent');
 
   const friends = [
     { id: 3, name: "Besique Monroe", lastSeen: "3h ago", online: true },
@@ -33,18 +33,21 @@ export default function Contacts() {
 
         <div className="flex bg-[#181818] p-1 rounded-xl border border-[#2A2A2A]">
           <button 
-            onClick={() => setView('contacts')}
-            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'contacts' ? 'bg-[#2A2A2A] text-white' : 'text-[#979797] hover:text-white'}`}
-          >
-            <Users size={16} /> Amis
-          </button>
-          <button 
             onClick={() => setView('recent')}
             className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'recent' ? 'bg-[#2A2A2A] text-white' : 'text-[#979797] hover:text-white'}`}
           >
-            <History size={16} /> Récents
+            <Users size={16} /> Récents
           </button>
+          <button 
+            onClick={() => setView('contacts')}
+            className={`flex items-center gap-2 px-4 py-2 rounded-lg text-sm font-medium transition ${view === 'contacts' ? 'bg-[#2A2A2A] text-white' : 'text-[#979797] hover:text-white'}`}
+          >
+            <History size={16} /> Amis
+          </button>          
         </div>
+        <button className="flex items-center gap-2 bg-[#EF3C56] px-6 py-3 rounded-xl text-white font-bold hover:bg-[#c22f44] transition shadow-lg shadow-[#EF3C56]/20">
+          <UserPlus size={18} /> Ajouter
+        </button>                  
       </div>
 
       <div className="space-y-1 min-h-[300px]">
@@ -80,9 +83,6 @@ export default function Contacts() {
       </div>
 
       <div className="mt-12 flex flex-col items-center border-t border-[#2A2A2A] pt-8 opacity-60 hover:opacity-100 transition duration-300">
-        <button className="flex items-center gap-2 bg-[#EF3C56] px-6 py-3 rounded-xl text-white font-bold hover:bg-[#c22f44] transition shadow-lg shadow-[#EF3C56]/20 mb-6">
-          <UserPlus size={18} /> Ajouter un ami
-        </button>
         <div className="flex flex-col items-center">
           <MessageCirclePlus size={24} className="text-[#979797] mb-2" />
           <p className="text-sm text-[#979797]">
