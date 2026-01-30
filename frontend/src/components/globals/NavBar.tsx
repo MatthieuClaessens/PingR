@@ -2,9 +2,31 @@
 
 import React, { useState } from "react";
 import { Bell, Settings, User, Search, LogOut, UserCircle, ShieldCheck } from "lucide-react";
+import { useNavigate } from "react-router-dom";
+import http from "../../api/http-common";
+import { clearToken } from "../../services/auth/AuthenticationService"; // Import sans 'type'
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
+  const logout = async (e: React.MouseEvent | React.FormEvent) => {
+    e.preventDefault();
+    setError('');
+    setLoading(true);
+
+    try {
+      await http.post("auth/logout");
+    } catch (err) {
+      console.error("Failed to logout from backend", err);
+    } finally {
+      clearToken(); // Supprime le token du localStorage
+      navigate('/'); // Redirige vers la racine
+      setLoading(false);
+    }
+  }; // <-- La fonction logout s'arrête ici
 
   return (
     <nav className="h-14 w-full bg-[#181818] border-b border-[#2A2A2A] flex items-center justify-between px-4 relative z-[100]">
@@ -28,12 +50,11 @@ export const Navbar = () => {
       <div className="flex items-center gap-4">
         <Bell className="text-[#979797] hover:text-[#EEEEEE] cursor-pointer transition" size={20} />
         <Settings className="text-[#979797] hover:text-[#EEEEEE] cursor-pointer transition" size={20} />
-        
+
         <div className="h-8 w-px bg-[#2A2A2A] mx-1" />
-        
-        {/* BOUTON PROFIL AVEC DROPDOWN */}
+
         <div className="relative">
-          <div 
+          <div
             onClick={() => setIsOpen(!isOpen)}
             className="flex items-center gap-2 pl-2 cursor-pointer group"
           >
@@ -45,7 +66,6 @@ export const Navbar = () => {
             </span>
           </div>
 
-          {/* MENU DÉROULANT DU COMPTE */}
           {isOpen && (
             <>
               <div className="fixed inset-0 z-[-1]" onClick={() => setIsOpen(false)} />
@@ -62,8 +82,14 @@ export const Navbar = () => {
                     <ShieldCheck size={16} /> Mappings & Rôles
                   </button>
                   <div className="h-px bg-[#2A2A2A] my-1 mx-2" />
-                  <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 rounded-lg transition">
-                    <LogOut size={16} /> Déconnexion
+                  
+                  {/* Ajout du onClick ici */}
+                  <button 
+                    onClick={logout}
+                    disabled={loading}
+                    className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 rounded-lg transition disabled:opacity-50"
+                  >
+                    <LogOut size={16} /> {loading ? "Déconnexion..." : "Déconnexion"}
                   </button>
                 </div>
               </div>

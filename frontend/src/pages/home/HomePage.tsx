@@ -1,7 +1,6 @@
 "use client";
 
 import React from "react";
-import { MessageCirclePlus, MessageCircle, UserPlus, EllipsisVertical } from "lucide-react";
 import { Navbar } from "../../components/globals/NavBar";
 import Contacts from "../../components/home/Contacts";
 

@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { AtSign, LockKeyhole } from 'lucide-react';
 import http from "../../api/http-common";
+import { setToken } from "../../services/auth/AuthenticationService";
 
 interface LoginFormProps {
   setMode: (s: 'login' | 'register' | 'forgotpassword') => void;
@@ -27,6 +28,7 @@ export default function LoginForm({ setMode, onLoginSuccess }: LoginFormProps) {
       });
 
       if (response.status === 200) {
+        setToken(response.data.token);
         onLoginSuccess(response.data);
       }
     } catch (err: any) {
