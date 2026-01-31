@@ -1,32 +1,46 @@
 "use client";
 
 import React, { useState } from "react";
-import { Bell, Settings, User, Search, LogOut, UserCircle, ShieldCheck } from "lucide-react";
+import { Bell, Settings, User, Search, LogOut, UserCircle, ShieldCheck, UserPlus } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import http from "../../api/http-common";
-import { clearToken } from "../../services/auth/AuthenticationService"; // Import sans 'type'
+import { clearToken } from "../../services/auth/AuthenticationService";
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  
+  const [searchQuery, setSearchQuery] = useState('');
   const navigate = useNavigate();
+
+  const handleFriendAction = async () => {
+    if (!searchQuery) return;
+    setLoading(true);
+    try {
+      await http.post("/friends/request", { username: searchQuery });
+      alert(`Demande envoyée à ${searchQuery} !`);
+      setSearchQuery('');
+    } catch (err) {
+      console.error("Erreur lors de l'envoi de l'invitation", err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const logout = async (e: React.MouseEvent | React.FormEvent) => {
     e.preventDefault();
-    setError('');
     setLoading(true);
-
     try {
       await http.post("auth/logout");
     } catch (err) {
-      console.error("Failed to logout from backend", err);
+      console.error("Failed to logout", err);
     } finally {
-      clearToken(); // Supprime le token du localStorage
-      navigate('/'); // Redirige vers la racine
+      clearToken();
+      navigate('/');
       setLoading(false);
     }
-  }; // <-- La fonction logout s'arrête ici
+  };
 
   return (
     <nav className="h-14 w-full bg-[#181818] border-b border-[#2A2A2A] flex items-center justify-between px-4 relative z-[100]">
@@ -36,14 +50,30 @@ export const Navbar = () => {
         </h3>
       </div>
 
-      <div className="flex-1 max-w-md mx-4">
-        <div className="relative flex items-center">
-          <Search className="absolute left-3 text-[#979797]" size={16} />
+      <div className="flex-1 max-w-xl mx-4">
+        <div className="relative flex items-center bg-[#121212] rounded-xl border border-[#2A2A2A] focus-within:border-[#EF3C56] transition-all p-1 pl-3 group">
+          <Search className="text-[#979797] group-focus-within:text-[#EF3C56] transition-colors" size={18} />
+          
           <input
             type="text"
-            placeholder="Rechercher..."
-            className="w-full bg-[#121212] text-sm text-[#EEEEEE] pl-10 pr-4 py-1.5 rounded-md border border-[#2A2A2A] focus:border-[#EF3C56] outline-none transition"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Rechercher ou ajouter un contact..."
+            className="w-full bg-transparent text-sm text-[#EEEEEE] px-3 py-1.5 outline-none placeholder:text-[#555555]"
           />
+
+          <button 
+            disabled={!searchQuery || loading}
+            onClick={handleFriendAction}
+            className={`flex items-center gap-2 px-4 py-1.5 rounded-lg text-white text-xs font-bold transition-all shadow-lg whitespace-nowrap
+              ${searchQuery 
+                ? 'bg-[#EF3C56] hover:bg-[#c22f44] opacity-100 translate-x-0' 
+                : 'bg-[#2A2A2A] opacity-0 translate-x-2 pointer-events-none'
+              }`}
+          >
+            <UserPlus size={14} /> 
+            <span>{loading ? "..." : "Ajouter"}</span>
+          </button>
         </div>
       </div>
 
@@ -82,8 +112,6 @@ export const Navbar = () => {
                     <ShieldCheck size={16} /> Mappings & Rôles
                   </button>
                   <div className="h-px bg-[#2A2A2A] my-1 mx-2" />
-                  
-                  {/* Ajout du onClick ici */}
                   <button 
                     onClick={logout}
                     disabled={loading}

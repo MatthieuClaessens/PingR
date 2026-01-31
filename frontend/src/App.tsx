@@ -5,6 +5,7 @@ import { useEffect } from "react";
 
 import './App.css';
 import { isAuthenticated } from "./services/auth/AuthenticationService";
+import { ConversationPage } from "./pages/conversation/ConversationPage";
 
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
@@ -19,12 +20,17 @@ function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<AuthenticationPage/>} />
-        <Route path="/home" element={
+          <Route path="/home" element={    
           <ProtectedRoute>
             <HomePage />
           </ProtectedRoute>
-        }
-        />
+        } />
+
+        <Route path="/conversation" element={    
+          <ProtectedRoute>
+            <ConversationPage /> 
+          </ProtectedRoute>
+        } />
       </Routes>
     </BrowserRouter>
   );

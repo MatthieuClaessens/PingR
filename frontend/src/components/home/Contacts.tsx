@@ -44,10 +44,7 @@ export default function Contacts() {
           >
             <History size={16} /> Amis
           </button>          
-        </div>
-        <button className="flex items-center gap-2 bg-[#EF3C56] px-6 py-3 rounded-xl text-white font-bold hover:bg-[#c22f44] transition shadow-lg shadow-[#EF3C56]/20">
-          <UserPlus size={18} /> Ajouter
-        </button>                  
+        </div>              
       </div>
 
       <div className="space-y-1 min-h-[300px]">
@@ -89,6 +86,7 @@ export default function Contacts() {
             Besoin de parler à quelqu'un d'autre ?
             <span className="text-[#EF3C56] ml-2 cursor-pointer hover:underline font-medium">Lancer une recherche</span>
           </p>
+          
         </div>
       </div>
     </div>
