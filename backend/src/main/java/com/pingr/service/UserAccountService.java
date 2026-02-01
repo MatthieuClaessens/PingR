@@ -128,6 +128,13 @@ public class UserAccountService {
         userAccountRepository.delete(target);
     }
 
+    @Transactional(readOnly = true)
+    public List<UserAccountDTO> searchUsers(String query) {
+        return userAccountRepository.findByAccountName(query)
+                .map(userAccount -> List.of(userAccountMapper.toDTO(userAccount)))
+                .orElse(List.of());
+        }
+
     @Transactional
     public void changePassword(Long accountId, ChangePasswordDTO changePasswordDTO) {
         UserAccount userAccount = userAccountRepository.findById(accountId)

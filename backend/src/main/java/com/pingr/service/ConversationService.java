@@ -51,37 +51,36 @@ public class ConversationService {
 
     @Transactional
     public ConversationDTO createConversation(Set<Long> accountIds, Long accountId) {
-        accountIds.add(accountId);
-        Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(accountIds));
-
-        if (userAccounts.size() != accountIds.size()) {
-            throw new EntityNotFoundException("One or more users could not be found.");
+        if (accountIds == null || accountIds.isEmpty()) {
+            throw new IllegalArgumentException("La liste des participants ne peut pas être vide.");
         }
 
+        Set<Long> allIds = new HashSet<>(accountIds);
+        allIds.add(accountId);
+
+        Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(allIds));
+
+        if (userAccounts.size() != allIds.size()) {
+            throw new EntityNotFoundException("Un ou plusieurs utilisateurs sont introuvables.");
+        }
         if (userAccounts.size() == 2) {
-            Set<Long> userIds = userAccounts.stream()
-                    .map(UserAccount::getAccountId)
-                    .collect(Collectors.toSet());
-
-            List<Conversation> existing = conversationRepository
+            List<Conversation> existingConvs = conversationRepository
                     .findByUserAccounts_AccountIdAndConversationType(accountId, ConversationType.SINGLE);
-
-            for (Conversation conv : existing) {
+            for (Conversation conv : existingConvs) {
                 Set<Long> existingIds = conv.getUserAccounts().stream()
                         .map(UserAccount::getAccountId)
                         .collect(Collectors.toSet());
-                if (existingIds.equals(userIds)) {
+                if (existingIds.equals(allIds)) {
                     return conversationMapper.toDTO(conv);
                 }
             }
         }
-
         Conversation conversation = new Conversation();
         conversation.setConversationType(userAccounts.size() > 2 ? ConversationType.GROUP : ConversationType.SINGLE);
         conversation.setCreatorId(accountId);
         conversation.setUserAccounts(userAccounts);
-
-        return conversationMapper.toDTO(conversationRepository.save(conversation));
+        Conversation savedConversation = conversationRepository.saveAndFlush(conversation);
+        return conversationMapper.toDTO(savedConversation);
     }
 
     @Transactional

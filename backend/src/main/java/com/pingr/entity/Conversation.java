@@ -17,7 +17,7 @@ public class Conversation {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(nullable = false)
+    @Column(name = "conversation_id", nullable = false)
     private Long conversationId;
 
     @Column(name = "creator_id")
@@ -27,7 +27,7 @@ public class Conversation {
     @Column(nullable = false)
     private ConversationType conversationType  = ConversationType.SINGLE;
 
-    @ManyToMany
+    @ManyToMany(cascade = { CascadeType.PERSIST, CascadeType.MERGE })
     @JoinTable(
             name = "participates",
             joinColumns = @JoinColumn(name = "conversation_id"),
@@ -37,4 +37,8 @@ public class Conversation {
 
     @OneToMany(mappedBy = "conversation", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Message> messages = new ArrayList<>();
+
+    public void addUserAccount(UserAccount userAccount) {
+        this.userAccounts.add(userAccount);
+    }
 }

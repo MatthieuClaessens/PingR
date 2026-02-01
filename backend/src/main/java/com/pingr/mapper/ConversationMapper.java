@@ -26,10 +26,14 @@ public class ConversationMapper {
         dto.setCreatorId(c.getCreatorId());
 
         if (c.getUserAccounts() != null) {
+            System.out.println("Mapper : Nombre de comptes trouvés dans l'entité : " + c.getUserAccounts().size());
+
             Set<Long> accountsId = c.getUserAccounts().stream()
                     .map(UserAccount::getAccountId)
                     .collect(Collectors.toSet());
             dto.setAccountIds(accountsId);
+        } else {
+            System.out.println("Mapper : Attention, userAccounts est NULL");
         }
         return dto;
     }

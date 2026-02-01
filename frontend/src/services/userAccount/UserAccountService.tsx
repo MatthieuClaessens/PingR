@@ -1,8 +1,18 @@
-import http from "../http-common";
+import http from "../../api/http-common";
 
-export const login = (accountEmail: string, accountPassword: string) => {
-  return http.post("/auth/login", {
-    accountEmail,
-    password: accountPassword
-  });
+export interface UserAccountDTO {
+  accountId: number;
+  accountName: string;
+  avatarPath: string;
+  role: string;
+}
+
+
+const UserAccountService = {
+  searchUsers: async (query: string): Promise<UserAccountDTO[]> => {
+    const response = await http.get<UserAccountDTO[]>(`/user/search?query=${query}`);
+    return response.data;
+  }
 };
+
+export default UserAccountService;

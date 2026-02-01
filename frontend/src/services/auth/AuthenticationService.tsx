@@ -1,17 +1,17 @@
-const TOKEN_KEY = 'token'
+const TOKEN_KEY = 'token';
 
-export function getToken() {
+export function getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY)
 }
 
-export function setToken(token) {
+export function setToken(token: string): void {
     if (token) localStorage.setItem(TOKEN_KEY, token)
 }
 
-export function clearToken() {
+export function clearToken(): void {
     localStorage.removeItem(TOKEN_KEY)
 }
 
-export function isAuthenticated() {
+export function isAuthenticated(): boolean {
     return Boolean(getToken())
 }

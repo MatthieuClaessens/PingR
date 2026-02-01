@@ -1,36 +1,52 @@
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
 import AuthenticationPage from "./pages/auth/AuthenticationPage";
 import HomePage from "./pages/home/HomePage";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { useEffect } from "react";
-
-import './App.css';
-import { isAuthenticated } from "./services/auth/AuthenticationService";
 import { ConversationPage } from "./pages/conversation/ConversationPage";
-
+import { isAuthenticated } from "./services/auth/AuthenticationService";
+import './App.css';
 
 function ProtectedRoute({ children }: { children: React.ReactNode }) {
   if (!isAuthenticated()) {
-    return <Navigate to="/" replace />
+    console.warn("Accès refusé : Utilisateur non authentifié.");
+    return <Navigate to="/" replace />;
   }
-  return <>{children}</>
+  return <>{children}</>;
+}
+
+function ConversationWrapper() {
+  const { id } = useParams<{ id: string }>();
+  const activeId = id ? parseInt(id, 10) : null;
+
+  console.log("🛠 ConversationWrapper - ID détecté :", activeId);
+
+  return <ConversationPage activeId={activeId} />;
 }
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<AuthenticationPage/>} />
-          <Route path="/home" element={    
+        <Route path="/" element={<AuthenticationPage />} />
+
+        <Route path="/home" element={
           <ProtectedRoute>
             <HomePage />
           </ProtectedRoute>
         } />
 
-        <Route path="/conversation" element={    
+        <Route path="/conversation/:id" element={
           <ProtectedRoute>
-            <ConversationPage /> 
+            <ConversationWrapper />
           </ProtectedRoute>
         } />
+
+        <Route path="/conversation" element={
+          <ProtectedRoute>
+            <ConversationPage activeId={null} />
+          </ProtectedRoute>
+        } />
+
+        <Route path="*" element={<Navigate to="/home" replace />} />
       </Routes>
     </BrowserRouter>
   );

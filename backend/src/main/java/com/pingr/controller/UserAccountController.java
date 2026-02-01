@@ -52,6 +52,12 @@ public class UserAccountController {
             return ResponseEntity.ok(updated);
     }
 
+    @GetMapping("/user/search")
+    public ResponseEntity<List<UserAccountDTO>> searchUsers(@RequestParam("q") String query) {
+        List<UserAccountDTO> results = userAccountService.searchUsers(query);
+        return ResponseEntity.ok(results);
+    }
+
     @GetMapping("/user/me")
     public ResponseEntity<UserAccountDTO> getMyProfile(Authentication authentication) {
         Long accountId = (Long) authentication.getPrincipal();
@@ -59,7 +65,7 @@ public class UserAccountController {
     }
 
     @GetMapping("/user/{targetId}")
-    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
+    @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR', 'USER')")
     public ResponseEntity<UserAccountDTO> getUserProfile(@PathVariable Long targetId) {
         return ResponseEntity.ok(userAccountService.getUserAccountById(targetId));
     }
