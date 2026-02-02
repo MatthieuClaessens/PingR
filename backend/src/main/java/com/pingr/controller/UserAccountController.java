@@ -22,7 +22,6 @@ public class UserAccountController {
 
     private final UserAccountService userAccountService;
 
-
     @GetMapping("/users")
     @PreAuthorize("hasAnyRole('ADMIN', 'MODERATOR')")
     public ResponseEntity<List<UserAccountDTO>> getAllUsers() {
@@ -37,8 +36,7 @@ public class UserAccountController {
                 registerDTO.getAccountName(),
                 registerDTO.getAccountEmail(),
                 registerDTO.getPassword(),
-                registerDTO.getAvatarPath()
-        );
+                registerDTO.getAvatarPath());
         return ResponseEntity.status(201).body(created);
     }
 
@@ -47,14 +45,17 @@ public class UserAccountController {
             @PathVariable Long accountId,
             @Valid @RequestBody UserAccountDTO userAccountDTO,
             Authentication authentication) {
-            Long requesterId = (Long) authentication.getPrincipal();
-            UserAccountDTO updated = userAccountService.editUserAccount(accountId, requesterId, userAccountDTO);
-            return ResponseEntity.ok(updated);
+        Long requesterId = (Long) authentication.getPrincipal();
+        UserAccountDTO updated = userAccountService.editUserAccount(accountId, requesterId, userAccountDTO);
+        return ResponseEntity.ok(updated);
     }
 
     @GetMapping("/user/search")
-    public ResponseEntity<List<UserAccountDTO>> searchUsers(@RequestParam("q") String query) {
-        List<UserAccountDTO> results = userAccountService.searchUsers(query);
+    public ResponseEntity<List<UserAccountDTO>> searchUsers(
+            @RequestParam("q") String query,
+            Authentication authentication) {
+        Long accountId = (Long) authentication.getPrincipal();
+        List<UserAccountDTO> results = userAccountService.searchUsers(query, accountId);
         return ResponseEntity.ok(results);
     }
 
@@ -75,8 +76,7 @@ public class UserAccountController {
     public ResponseEntity<UserAccountDTO> changeRole(
             @PathVariable Long targetId,
             @RequestBody Role newRole,
-            Authentication authentication
-    ) {
+            Authentication authentication) {
         Long requesterId = (Long) authentication.getPrincipal();
         UserAccountDTO updated = userAccountService.changeRole(requesterId, targetId, newRole);
         return ResponseEntity.ok(updated);
@@ -87,12 +87,12 @@ public class UserAccountController {
             @PathVariable Long accountId,
             @Valid @RequestBody ChangePasswordDTO changePasswordDTO,
             Authentication authentication) {
-            Long requesterId = (Long) authentication.getPrincipal();
-            if (!requesterId.equals(accountId)) {
-                throw new SecurityException("You can only change your own password");
+        Long requesterId = (Long) authentication.getPrincipal();
+        if (!requesterId.equals(accountId)) {
+            throw new SecurityException("You can only change your own password");
         }
-            userAccountService.changePassword(accountId, changePasswordDTO);
-            return ResponseEntity.noContent().build();
+        userAccountService.changePassword(accountId, changePasswordDTO);
+        return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/user/{accountId}/change-email")

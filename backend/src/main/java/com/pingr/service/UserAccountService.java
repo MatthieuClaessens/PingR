@@ -41,7 +41,8 @@ public class UserAccountService {
     }
 
     @Transactional
-    public UserAccountDTO createUserAccount(String accountName, String accountEmail, String password, String avatarPath) {
+    public UserAccountDTO createUserAccount(String accountName, String accountEmail, String password,
+            String avatarPath) {
         if (userAccountRepository.existsByAccountName(accountName)) {
             throw new IllegalArgumentException("This username is already in use.");
         }
@@ -129,11 +130,12 @@ public class UserAccountService {
     }
 
     @Transactional(readOnly = true)
-    public List<UserAccountDTO> searchUsers(String query) {
+    public List<UserAccountDTO> searchUsers(String query, Long currentUserId) {
         return userAccountRepository.findByAccountName(query)
+                .filter(userAccount -> !userAccount.getAccountId().equals(currentUserId))
                 .map(userAccount -> List.of(userAccountMapper.toDTO(userAccount)))
                 .orElse(List.of());
-        }
+    }
 
     @Transactional
     public void changePassword(Long accountId, ChangePasswordDTO changePasswordDTO) {

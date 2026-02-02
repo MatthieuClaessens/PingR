@@ -57,12 +57,16 @@ public class ConversationService {
 
         Set<Long> allIds = new HashSet<>(accountIds);
         allIds.add(accountId);
-
         Set<UserAccount> userAccounts = new HashSet<>(userAccountRepository.findAllById(allIds));
 
         if (userAccounts.size() != allIds.size()) {
             throw new EntityNotFoundException("Un ou plusieurs utilisateurs sont introuvables.");
         }
+
+        if (userAccounts.size() == 1) {
+            throw new IllegalArgumentException("Vous ne pouvez pas créer une conversation avec vous-même.");
+        }
+
         if (userAccounts.size() == 2) {
             List<Conversation> existingConvs = conversationRepository
                     .findByUserAccounts_AccountIdAndConversationType(accountId, ConversationType.SINGLE);
@@ -75,11 +79,14 @@ public class ConversationService {
                 }
             }
         }
+
         Conversation conversation = new Conversation();
         conversation.setConversationType(userAccounts.size() > 2 ? ConversationType.GROUP : ConversationType.SINGLE);
         conversation.setCreatorId(accountId);
         conversation.setUserAccounts(userAccounts);
-        Conversation savedConversation = conversationRepository.saveAndFlush(conversation);
+
+        // ✅ Optionnel : retire le flush si pas nécessaire
+        Conversation savedConversation = conversationRepository.save(conversation);
         return conversationMapper.toDTO(savedConversation);
     }
 
@@ -165,7 +172,8 @@ public class ConversationService {
         UserAccount target = userAccountRepository.findById(targetId)
                 .orElseThrow(() -> new EntityNotFoundException(USER_NOT_FOUND));
 
-        if (!(conversation.getConversationType() == ConversationType.GROUP && requesterId.equals(conversation.getCreatorId()))) {
+        if (!(conversation.getConversationType() == ConversationType.GROUP
+                && requesterId.equals(conversation.getCreatorId()))) {
             throw new IllegalArgumentException("Only the creator can kick a participant");
         }
 
@@ -192,7 +200,8 @@ public class ConversationService {
             return;
         }
 
-        if (conversation.getConversationType() == ConversationType.GROUP && accountId.equals(conversation.getCreatorId())) {
+        if (conversation.getConversationType() == ConversationType.GROUP
+                && accountId.equals(conversation.getCreatorId())) {
             UserAccount nextCreator = conversation.getUserAccounts().stream()
                     .findFirst()
                     .orElseThrow(() -> new IllegalStateException("Conversation should not be empty"));
