@@ -15,4 +15,11 @@ public class ConversationDTO {
 
     @NotEmpty
     private Set<Long> accountIds;
+    private Set<AccountShortInfo> participants;
+
+    @Data
+    public static class AccountShortInfo {
+        private Long accountId;
+        private String accountName;
+    }
 }

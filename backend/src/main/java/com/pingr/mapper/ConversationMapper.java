@@ -25,15 +25,25 @@ public class ConversationMapper {
         dto.setConversationType(c.getConversationType());
         dto.setCreatorId(c.getCreatorId());
 
-        if (c.getUserAccounts() != null) {
-            System.out.println("Mapper : Nombre de comptes trouvés dans l'entité : " + c.getUserAccounts().size());
-
+        if (c.getUserAccounts() != null && !c.getUserAccounts().isEmpty()) {
             Set<Long> accountsId = c.getUserAccounts().stream()
                     .map(UserAccount::getAccountId)
                     .collect(Collectors.toSet());
             dto.setAccountIds(accountsId);
+
+            Set<ConversationDTO.AccountShortInfo> participants = c.getUserAccounts().stream()
+                    .map(user -> {
+                        ConversationDTO.AccountShortInfo info = new ConversationDTO.AccountShortInfo();
+                        info.setAccountId(user.getAccountId());
+                        info.setAccountName(user.getAccountName());
+                        return info;
+                    })
+                    .collect(Collectors.toSet());
+
+            dto.setParticipants(participants);
+            System.out.println("Mapper : " + participants.size() + " participants mappés avec noms.");
         } else {
-            System.out.println("Mapper : Attention, userAccounts est NULL");
+            System.out.println("Mapper : Attention, userAccounts est NULL ou VIDE pour la conv ID: " + c.getConversationId());
         }
         return dto;
     }
