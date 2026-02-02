@@ -46,11 +46,11 @@ public class MessageController {
     public ResponseEntity<MessageDTO> createMessage(
             @PathVariable Long conversationId,
             Authentication authentication,
-            @Valid @RequestBody MessageDTO messageDTO
+            @Valid @RequestBody MessageRequest request
     ) {
         Long accountId = (Long) authentication.getPrincipal();
         MessageDTO created = messageService
-                .createMessage(conversationId, accountId, messageDTO.getMessageContent());
+                .createMessage(conversationId, accountId, request.messageContent());
         return ResponseEntity.status(201).body(created);
     }
 
@@ -78,3 +78,5 @@ public class MessageController {
         return ResponseEntity.noContent().build();
     }
 }
+
+record MessageRequest(String messageContent) {}
