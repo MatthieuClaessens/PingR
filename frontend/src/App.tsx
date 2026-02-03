@@ -1,55 +1,31 @@
-import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthenticationPage from "./pages/auth/AuthenticationPage";
 import HomePage from "./pages/home/HomePage";
-import { ConversationPage } from "./pages/conversation/ConversationPage";
+import ConversationPage from "./pages/conversation/ConversationPage";
+import Sidebar from "./components/globals/SideBar";
 import { isAuthenticated } from "./services/auth/AuthenticationService";
 import './App.css';
 
-function ProtectedRoute({ children }: { children: React.ReactNode }) {
-  if (!isAuthenticated()) {
-    console.warn("Accès refusé : Utilisateur non authentifié.");
-    return <Navigate to="/" replace />;
-  }
-  return <>{children}</>;
-}
+export default function App() {
+  const auth = isAuthenticated();
 
-function ConversationWrapper() {
-  const { id } = useParams<{ id: string }>();
-  const activeId = id ? parseInt(id, 10) : null;
-
-  console.log("🛠 ConversationWrapper - ID détecté :", activeId);
-
-  return <ConversationPage activeId={activeId} />;
-}
-
-function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<AuthenticationPage />} />
+      <div className="flex h-screen w-full bg-[#121212] text-[#EEEEEE] overflow-hidden">
+        {auth && <Sidebar />} 
 
-        <Route path="/home" element={
-          <ProtectedRoute>
-            <HomePage />
-          </ProtectedRoute>
-        } />
+        <div className="flex-1 overflow-hidden relative">
+          <Routes>
+            <Route path="/" element={<AuthenticationPage />} />
 
-        <Route path="/conversation/:id" element={
-          <ProtectedRoute>
-            <ConversationWrapper />
-          </ProtectedRoute>
-        } />
+            <Route path="/home" element={auth ? <HomePage /> : <Navigate to="/" />} />
+            <Route path="/conversation/:id" element={auth ? <ConversationPage /> : <Navigate to="/" />} />
+            <Route path="/conversation" element={auth ? <ConversationPage /> : <Navigate to="/" />} />
 
-        <Route path="/conversation" element={
-          <ProtectedRoute>
-            <ConversationPage activeId={null} />
-          </ProtectedRoute>
-        } />
-
-        <Route path="*" element={<Navigate to="/home" replace />} />
-      </Routes>
+            <Route path="*" element={<Navigate to="/home" replace />} />
+          </Routes>
+        </div>
+      </div>
     </BrowserRouter>
   );
 }
-
-export default App;

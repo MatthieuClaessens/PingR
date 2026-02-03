@@ -1014,7 +1014,7 @@
 											"top": 676,
 											"width": 141.20068359375,
 											"height": 13,
-											"text": "-MessageContent",
+											"text": "-messageContent",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3354,7 +3354,8 @@
 								"$ref": "AAAAAAGa9bk74Fdfa5k="
 							},
 							"name": "conversationType {FK} {id}",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
@@ -3363,7 +3364,8 @@
 								"$ref": "AAAAAAGa9bk74Fdfa5k="
 							},
 							"name": "creatorId",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						}
 					]
 				},
@@ -3433,9 +3435,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGa9br7TleRMIc="
 							},
-							"name": "MessageContent",
-							"visibility": "private",
-							"type": ""
+							"name": "messageContent",
+							"visibility": "private"
 						},
 						{
 							"_type": "UMLAttribute",

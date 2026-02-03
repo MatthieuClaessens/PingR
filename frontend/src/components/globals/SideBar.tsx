@@ -1,50 +1,56 @@
 "use client";
-import React from "react";
-import { MessageSquare, Settings, LogOut, Search } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Search, MessageSquare, UserPlus } from "lucide-react";
+import { Link, useParams } from "react-router-dom";
 
-export function Sidebar({ onSelectChat, activeId }: { onSelectChat: (id: number) => void, activeId: number | null }) {
-  const chats = [
-    { id: 1, name: "Nenfal", lastMsg: "Salut !", time: "10:45" },
-    { id: 2, name: "Test", lastMsg: "Ça marche ?", time: "Hier" },
-  ];
+export interface Conversation {
+  conversationId: number;
+  userAccounts: { accountName: string }[];
+}
+
+export default function Sidebar() {
+  const [conversations, setConversations] = useState<Conversation[]>([]);
+  const [searchTerm, setSearchTerm] = useState("");
+  const { id } = useParams(); // Pour savoir quel chat est actif
+
+  useEffect(() => {
+    fetch("http://localhost:8080/api/conversations")
+      .then(res => res.json())
+      .then(data => setConversations(data))
+      .catch(err => console.error("Erreur Sidebar:", err));
+  }, []);
 
   return (
-    <aside className="w-80 h-screen bg-[#181818] border-r border-[#2A2A2A] flex flex-col">
-      <div className="p-6 border-b border-[#2A2A2A]">
-        <h2 className="text-xl font-bold text-white mb-4">Messages</h2>
+    <aside className="w-[320px] flex flex-col border-r border-[#2A2A2A] bg-[#181818] h-full text-[#EEEEEE]">
+      <div className="p-6 space-y-4">
+        <h2 className="text-2xl font-bold font-['Salsa']">Ping<span className="text-[#EF3C56]">R</span></h2>
         <div className="relative">
-          <Search className="absolute left-3 top-2.5 text-[#555555]" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-[#555555]" size={18} />
           <input 
-            className="w-full bg-[#121212] border border-[#2A2A2A] rounded-xl py-2 pl-10 pr-4 text-sm focus:border-[#EF3C56] outline-none" 
+            type="text" 
             placeholder="Rechercher..." 
+            className="w-full bg-[#222222] border-none rounded-xl py-2.5 pl-10 pr-4 text-sm outline-none focus:ring-1 focus:ring-[#EF3C56]"
           />
         </div>
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {chats.map((chat) => (
-          <div 
-            key={chat.id}
-            onClick={() => onSelectChat(chat.id)}
-            className={`p-4 flex items-center gap-4 cursor-pointer transition-all hover:bg-[#222222] ${activeId === chat.id ? 'bg-[#222222] border-l-4 border-[#EF3C56]' : ''}`}
+        {conversations.map((conv) => (
+          <Link 
+            to={`/conversation/${conv.conversationId}`}
+            key={conv.conversationId}
+            className={`p-4 mx-2 mb-1 rounded-xl flex items-center gap-3 transition-all ${
+              Number(id) === conv.conversationId ? 'bg-[#EF3C56] text-white' : 'hover:bg-[#222222]'
+            }`}
           >
-            <div className="h-12 w-12 rounded-full bg-[#2A2A2A] flex-shrink-0 flex items-center justify-center font-bold text-[#EF3C56]">
-              {chat.name[0]}
+            <div className="h-10 w-10 rounded-full bg-[#333333] flex-shrink-0 flex items-center justify-center font-bold">
+              {conv.userAccounts[0].accountName[0].toUpperCase()}
             </div>
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-baseline">
-                <p className="font-semibold text-white truncate">{chat.name}</p>
-                <span className="text-[10px] text-[#555555]">{chat.time}</span>
-              </div>
-              <p className="text-xs text-[#555555] truncate">{chat.lastMsg}</p>
+            <div className="flex-1 overflow-hidden">
+              <h4 className="font-medium text-sm truncate">{conv.userAccounts[0].accountName}</h4>
             </div>
-          </div>
+          </Link>
         ))}
-      </div>
-
-      <div className="p-4 border-t border-[#2A2A2A] flex justify-between text-[#555555]">
-        <Settings size={20} className="hover:text-white cursor-pointer" />
-        <LogOut size={20} className="hover:text-[#EF3C56] cursor-pointer" />
       </div>
     </aside>
   );
