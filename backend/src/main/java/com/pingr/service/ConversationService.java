@@ -85,7 +85,6 @@ public class ConversationService {
         conversation.setCreatorId(accountId);
         conversation.setUserAccounts(userAccounts);
 
-        // ✅ Optionnel : retire le flush si pas nécessaire
         Conversation savedConversation = conversationRepository.save(conversation);
         return conversationMapper.toDTO(savedConversation);
     }
