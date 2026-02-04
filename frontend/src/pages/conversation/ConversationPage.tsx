@@ -4,7 +4,7 @@ import React, { useState, useEffect } from "react";
 import { Send, Phone, Video, MoreVertical } from "lucide-react";
 import { Sidebar } from "../../components/globals/SideBar";
 import type { Message } from "../../entities/message";
-import { messageService } from "../../services/message/MessageService";
+import { messageService } from "../../services/message/messageService";
 import type { Conversation } from "../../entities/conversation";
 
 export default function ConversationPage() {
