@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { AtSign, LockKeyhole } from 'lucide-react';
 import http from "../../api/http-common";
-import { setToken } from "../../services/auth/AuthenticationService";
+import { setToken } from "../../services/auth/authenticationService";
 
 interface LoginFormProps {
   setMode: (s: 'login' | 'register' | 'forgotpassword') => void;

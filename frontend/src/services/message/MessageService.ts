@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Message } from "../../entities/Message";
+import type { Message } from "../../entities/message";
 
 export interface PageResponse<T> {
     content: T[];          // Les vraies données (messages)

@@ -1,10 +1,12 @@
-import type { UserAccount } from "./UserAccount";
-import type { Message } from "./Message";
+export interface AccountShortInfo {
+    accountId: number;
+    accountName: string;
+}
 
 export interface Conversation {
     conversationId: number;
     conversationType: "SINGLE" | "GROUP";
-    creatorId?: number;
-    userAccounts: UserAccount[];
-    messages: Message[];
+    creatorId: number;
+    accountIds: number[];
+    participants: AccountShortInfo[];
 }

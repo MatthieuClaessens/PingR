@@ -3,7 +3,7 @@ import AuthenticationPage from "./pages/auth/AuthenticationPage";
 import HomePage from "./pages/home/HomePage";
 import ConversationPage from "./pages/conversation/ConversationPage";
 import Sidebar from "./components/globals/SideBar";
-import { isAuthenticated } from "./services/auth/AuthenticationService";
+import { isAuthenticated } from "./services/auth/authenticationService";
 import './App.css';
 
 export default function App() {

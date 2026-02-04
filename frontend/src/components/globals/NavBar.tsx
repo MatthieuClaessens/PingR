@@ -7,7 +7,7 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import http from "../../api/http-common";
-import { clearToken } from "../../services/auth/AuthenticationService";
+import { clearToken } from "../../services/auth/authenticationService";
 
 interface UserSearchResult {
   accountId: number;
