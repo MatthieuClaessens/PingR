@@ -12,8 +12,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <div className="flex h-screen w-full bg-[#121212] text-[#EEEEEE] overflow-hidden">
-        {auth && <Sidebar />} 
-
+        {auth}
         <div className="flex-1 overflow-hidden relative">
           <Routes>
             <Route path="/" element={<AuthenticationPage />} />

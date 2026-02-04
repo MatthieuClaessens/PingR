@@ -3,6 +3,7 @@
 import React, { useState } from "react";
 import { Navbar } from "../../components/globals/NavBar";
 import Contacts from "../../components/home/Contacts";
+import Sidebar from "../../components/globals/SideBar";
 
 interface UserSearchResult {
   id: string;
