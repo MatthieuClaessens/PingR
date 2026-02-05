@@ -30,9 +30,9 @@ export const messageService = {
         return response.data;
     },
 
-    editMessage: async (conversationId: number, messageId: number, updatedContent: string): Promise<Message> => {
+    editMessage: async (conversationId: number, messageId: number, messageContent: string): Promise<Message> => {
         const response = await http.patch<Message>(`/conversations/${conversationId}/messages/${messageId}`, {
-            updatedContent
+            messageContent
         });
         return response.data;
     },

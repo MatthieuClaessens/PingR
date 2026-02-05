@@ -203,7 +203,6 @@ export default function ConversationPage() {
                         </button>
                       )}
 
-                      {/* Menu contextuel */}
                       {menuOpenId === msg.messageId && (
                         <div className="absolute top-6 right-0 bg-[#2A2A2A] rounded-lg shadow-lg border border-[#333] py-1 z-10 min-w-[120px]">
                           <button

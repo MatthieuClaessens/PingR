@@ -59,11 +59,11 @@ public class MessageController {
             @PathVariable Long conversationId,
             @PathVariable Long messageId,
             Authentication authentication,
-            @Valid @RequestBody MessageDTO messageDTO
+            @RequestBody MessageRequest request
     ) {
         Long requesterId = (Long) authentication.getPrincipal();
         MessageDTO updated = messageService
-                .editMessage(conversationId, messageId, requesterId, messageDTO.getUpdatedContent());
+                .editMessage(conversationId, messageId, requesterId, request.messageContent());
         return ResponseEntity.ok(updated);
     }
 
