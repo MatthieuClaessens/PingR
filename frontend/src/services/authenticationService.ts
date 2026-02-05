@@ -1,3 +1,5 @@
+import { jwtDecode } from "jwt-decode";
+
 
 const TOKEN_KEY = 'token';
 
@@ -26,3 +28,18 @@ export const validateEmail = (email: string): boolean => {
 export const validatePassword = (pass: string): boolean => {
     return pass.length >= 10;
 };
+
+export function getUserInfo(): any {
+    const token = getToken();
+    if (!token) return null;
+    try {
+        return jwtDecode(token);
+    } catch (error) {
+    return null;
+    }
+}
+
+export function getMyId(): number | null {
+    const user = getUserInfo();
+    return user ? user.id : null;
+}

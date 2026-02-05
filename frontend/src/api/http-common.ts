@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from "../services/auth/authenticationService";
+import { getToken, clearToken } from "../services/authenticationService"; 
 
 const http = axios.create({
     baseURL: "http://localhost:8080/api",
@@ -16,7 +16,16 @@ http.interceptors.request.use(
         }
         return config;
     },
+    (error) => Promise.reject(error)
+);
+
+http.interceptors.response.use(
+    (response) => response,
     (error) => {
+        if (error.response && error.response.status === 401) {
+            clearToken();
+            window.location.href = "/"; 
+        }
         return Promise.reject(error);
     }
 );
