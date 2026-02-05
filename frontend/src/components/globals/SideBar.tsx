@@ -1,16 +1,17 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import http from "../../api/http-common";
 import type { Conversation } from "../../entities/conversation";
 
 export interface SidebarProps {
-    onSelectConv: (conv: Conversation) => void;
     myId: number;
 }
 
-export const Sidebar = ({ onSelectConv, myId }: SidebarProps) => {
+export const Sidebar = ({ myId }: SidebarProps) => {
     const [conversations, setConversations] = useState<Conversation[]>([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         http.get("/conversations/all")
@@ -32,7 +33,9 @@ export const Sidebar = ({ onSelectConv, myId }: SidebarProps) => {
                         const otherUser = conv.participants?.find(p => p.accountId !== myId);
                         const displayName = otherUser ? otherUser.accountName : "Mon compte";
                         return (
-                            <div key={conv.conversationId} onClick={() => onSelectConv(conv)}
+                            <div
+                                key={conv.conversationId}
+                                onClick={() => navigate(`/conversation/${conv.conversationId}`)} 
                                 className="p-4 hover:bg-[#252525] cursor-pointer transition-all border-b border-white/[0.02] flex items-center gap-3 group"
                             >
                                 <div className="h-11 w-11 rounded-xl bg-[#EF3C56]/10 border border-[#EF3C56]/20 flex items-center justify-center font-bold text-[#EF3C56] group-hover:bg-[#EF3C56] group-hover:text-white transition-all">

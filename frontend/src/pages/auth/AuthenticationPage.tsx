@@ -8,9 +8,6 @@ import ForgotPasswordForm from '../../components/auth/ForgotPasswordForm';
 import { useState } from 'react';
 import { useNavigate } from "react-router-dom";
 
-const validateEmail = (email: string) => email.includes('@') && email.length > 5;
-const validatePassword = (pass: string) => pass.length >= 10;
-
 export default function AuthenticationPage() {
   const [mode, setMode] = useState<'login' | 'register' | 'forgotpassword'>('login');
   const navigate = useNavigate();

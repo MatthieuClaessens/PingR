@@ -1,18 +1,30 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
+import { useParams } from "react-router-dom"; // ← AJOUTE ÇA
 import { Send, Phone, Video, MoreVertical } from "lucide-react";
-import { Sidebar } from "../../components/globals/SideBar";
+import { Sidebar } from "../../components/globals/Sidebar";
 import type { Message } from "../../entities/message";
 import { messageService } from "../../services/message/messageService";
 import type { Conversation } from "../../entities/conversation";
+import http from "../../api/http-common"; // ← AJOUTE ÇA
 
 export default function ConversationPage() {
   const myId = 1;
+  const { id } = useParams(); // ← AJOUTE ÇA
 
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputText, setInputText] = useState("");
+
+  // ← AJOUTE CE useEffect pour charger la conversation depuis l'URL
+  useEffect(() => {
+    if (!id) return;
+
+    http.get(`/conversations/${id}`)
+      .then(res => setSelectedConv(res.data))
+      .catch(err => console.error("Erreur chargement conversation:", err));
+  }, [id]);
 
   useEffect(() => {
     if (!selectedConv) return;
@@ -45,8 +57,8 @@ export default function ConversationPage() {
 
   return (
     <div className="flex h-screen w-full bg-[#1E1E1E] overflow-hidden">
-      <Sidebar myId={myId} onSelectConv={(conv: Conversation) => setSelectedConv(conv)}
-      />
+      <Sidebar myId={myId} />
+      
       <div className="flex-1 flex flex-col h-full text-white border-l border-[#2A2A2A]">
         {selectedConv ? (
           <>

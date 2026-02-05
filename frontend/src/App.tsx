@@ -2,7 +2,6 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import AuthenticationPage from "./pages/auth/AuthenticationPage";
 import HomePage from "./pages/home/HomePage";
 import ConversationPage from "./pages/conversation/ConversationPage";
-import Sidebar from "./components/globals/SideBar";
 import { isAuthenticated } from "./services/auth/authenticationService";
 import './App.css';
 
