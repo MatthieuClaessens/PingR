@@ -8,8 +8,10 @@ services:
       - POSTGRES_DB=pingr
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=admin
+    volumes:
+      - postgres-data:/var/lib/postgresql/
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U admin -d pingr"]
+      test: [ "CMD-SHELL", "pg_isready -U admin -d pingr" ]
       interval: 5s
       timeout: 5s
       retries: 5
@@ -21,12 +23,11 @@ services:
       - "8080:8080"
     depends_on:
       postgres:
-        condition: service_healthy # Attente DB prête
+        condition: service_healthy 
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/pingr
       - SPRING_DATASOURCE_USERNAME=admin
       - SPRING_DATASOURCE_PASSWORD=admin
-      # Création des tables tout seul à partir des entités via Hibernate
       - SPRING_JPA_HIBERNATE_DDL_AUTO=update
       - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.PostgreSQLDialect
 
@@ -37,3 +38,7 @@ services:
       - "8081:8080"
     depends_on:
       - postgres
+
+volumes:
+  postgres-data:
+    driver: local

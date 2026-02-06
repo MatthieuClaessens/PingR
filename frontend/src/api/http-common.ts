@@ -19,12 +19,26 @@ http.interceptors.request.use(
     (error) => Promise.reject(error)
 );
 
+const redirectState = {hasRedirected: false};
+
 http.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response && error.response.status === 401) {
+        if (redirectState.hasRedirected) return Promise.reject(error);
+        const status = error.response?.status;
+        const url = error.config?.url || "";
+        if (status === 404 && url.includes("/conversations/")) {
+            redirectState.hasRedirected = true;
+            console.warn("Conversation ou ressource inexistante - redirection");
+            alert("Cette conversation n'existe plus");
+            window.location.href = "/"
+        }
+
+        if (status === 401) {
+            redirectState.hasRedirected = true;
+            console.warn("Session invalide - déconnexion");
             clearToken();
-            window.location.href = "/"; 
+            window.location.href = "/"
         }
         return Promise.reject(error);
     }
