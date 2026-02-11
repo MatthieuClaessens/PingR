@@ -27,6 +27,9 @@ http.interceptors.response.use(
         if (redirectState.hasRedirected) return Promise.reject(error);
         const status = error.response?.status;
         const url = error.config?.url || "";
+        if (!getToken()) {
+            return Promise.reject(error);
+        }        
         if (status === 404 && url.includes("/conversations/")) {
             redirectState.hasRedirected = true;
             console.warn("Conversation ou ressource inexistante - redirection");

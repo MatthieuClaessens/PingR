@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -73,16 +74,16 @@ public class ConversationController {
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{conversationId}/participants/{targetId}")
+    @PostMapping("/{conversationId}/participants/{targetId}")
     public ResponseEntity<ConversationDTO> addParticipant(
             @PathVariable Long conversationId,
             @PathVariable Long targetId,
             Authentication authentication
     ) {
-        Long accountId = (Long) authentication.getPrincipal();
+        Long requesterId = (Long) authentication.getPrincipal();
         ConversationDTO updated = conversationService
-                .addParticipant(conversationId, targetId, accountId);
-        return ResponseEntity.ok(updated);
+                .addParticipant(conversationId, targetId, requesterId);
+        return ResponseEntity.status(HttpStatus.CREATED).body(updated);
     }
 
     @DeleteMapping("/{conversationId}/participants/{targetId}")
