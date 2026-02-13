@@ -1,4 +1,4 @@
-import type { UserAccount } from "./UserAccount";
+import type { UserAccount } from "./userAccount";
 
 export interface Message {
     messageId: number;

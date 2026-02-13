@@ -9,6 +9,7 @@ import type { Conversation } from "../../entities/conversation";
 import http from "../../api/http-common";
 import { getMyId } from "../../services/authenticationService";
 
+import { Navbar } from "../../components/globals/NavBar";
 import { ConversationHeader } from "../../components/conversation/ConversationHeader";
 import { MessageBubble } from "../../components/conversation/MessageBubble";
 import { MessageInput } from "../../components/conversation/MessageInput";
@@ -74,7 +75,7 @@ export default function ConversationPage() {
     if (!selectedConv) return;
     try {
       await messageService.editMessage(selectedConv.conversationId, messageId, newText);
-      setMessages(prev => prev.map(m => 
+      setMessages(prev => prev.map(m =>
         m.messageId === messageId ? { ...m, messageContent: newText } : m
       ));
     } catch (err) {
@@ -99,16 +100,17 @@ export default function ConversationPage() {
       <Sidebar myId={myId} />
 
       <div className="flex-1 flex flex-col h-full text-white border-l border-[#2A2A2A]">
+        <Navbar onSelectConv={() => { }} />
         {selectedConv ? (
           <>
             <ConversationHeader selectedConv={selectedConv} myId={myId} />
 
-            <main 
+            <main
               ref={messagesContainerRef}
               className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-[#1E1E1E]"
             >
               {messages.map((msg) => (
-                <MessageBubble 
+                <MessageBubble
                   key={msg.messageId}
                   msg={msg}
                   isMe={msg.userAccount?.accountId === myId}
@@ -120,9 +122,9 @@ export default function ConversationPage() {
               <div ref={messagesEndRef} />
             </main>
 
-            <MessageInput 
-              onSendMessage={handleSendMessage} 
-              placeholderName={selectedConv.participants?.find(p => p.accountId !== myId)?.accountName || "Discussion"} 
+            <MessageInput
+              onSendMessage={handleSendMessage}
+              placeholderName={selectedConv.participants?.find(p => p.accountId !== myId)?.accountName || "Discussion"}
             />
           </>
         ) : (

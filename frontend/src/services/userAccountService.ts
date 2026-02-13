@@ -1,16 +1,11 @@
-import http from "../../api/http-common";
+import http from "../api/http-common";
+import type { UserAccount } from "../entities/userAccount";
 
-export interface UserAccountDTO {
-  accountId: number;
-  accountName: string;
-  avatarPath: string;
-  role: string;
-}
 
 
 const UserAccountService = {
-  searchUsers: async (query: string): Promise<UserAccountDTO[]> => {
-    const response = await http.get<UserAccountDTO[]>(`/user/search?query=${query}`);
+  searchUsers: async (query: string): Promise<UserAccount[]> => {
+    const response = await http.get<UserAccount[]>(`/user/search?query=${query}`);
     return response.data;
   }
 };

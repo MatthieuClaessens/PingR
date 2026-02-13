@@ -93,7 +93,7 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
     <nav className="h-14 w-full bg-[#181818] border-b border-[#2A2A2A] flex items-center justify-between px-4 relative z-50">
       
       <div className="flex items-center gap-3">
-        <h3 onClick={() => navigate('/')} className="font-['Salsa'] text-4xl text-[#EEEEEE] cursor-pointer hover:scale-105 transition duration-300">
+        <h3 onClick={() => navigate('/home')} className="font-['Salsa'] text-4xl text-[#EEEEEE] cursor-pointer hover:scale-105 transition duration-300">
           Ping<span className="text-[#EF3C56]">R</span>
         </h3>
       </div>

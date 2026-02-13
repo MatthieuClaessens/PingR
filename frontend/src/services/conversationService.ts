@@ -1,5 +1,5 @@
 import axios from "axios";
-import type { Conversation } from "../../entities/conversation";
+import type { Conversation } from "../entities/conversation";
 
 const API_URL = "http://localhost:8080/api/conversations";
 
