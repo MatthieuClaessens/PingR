@@ -105,7 +105,8 @@ public class ConversationService {
                 throw new IllegalArgumentException("Only the creator can delete a group conversation.");
             }
         }
-
+        conversation.getMessages().clear();
+        conversationRepository.flush();
         conversationRepository.delete(conversation);
     }
 
