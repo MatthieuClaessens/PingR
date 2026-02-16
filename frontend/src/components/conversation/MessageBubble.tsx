@@ -2,6 +2,14 @@ import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, Edit2, Trash2, Check, X } from "lucide-react";
 import type { Message } from "../../entities/message";
 
+interface MessageBubbleProps {
+    msg: Message;
+    isMe: boolean;
+    isGroup: boolean;
+    onEdit: (id: number, content: string) => Promise<void>;
+    onDelete: (id: number) => void;
+}
+
 export const MessageBubble: React.FC<MessageBubbleProps> = ({
     msg,
     isMe,
@@ -59,15 +67,14 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({
                             <MoreHorizontal size={14} className="text-gray-300" />
                         </button>
 
-                        {/* Menu popup */}
                         {menuOpen && (
-                            <div className="absolute top-8 right-0 bg-black/95 backdrop-blur-lg border border-gray-700 rounded-xl shadow-2xl py-1.5 w-[110px] animate-ping-once">
+                            <div className="absolute top-8 right-0 bg-black/95 backdrop-blur-lg border border-gray-700 rounded-xl shadow-2xl py-1.5 w-[110px] animate-ping-once z-10">
                                 <button
                                     onClick={() => { 
                                         setIsEditing(true); 
                                         setMenuOpen(false); 
                                     }}
-                                    className="w-full px-2.5 py-1.5 text-left text-xs font-medium hover:bg-gray-800/50 flex items-center gap-2 rounded-lg transition-all hover:gap-2.5"
+                                    className="w-full px-2.5 py-1.5 text-left text-xs font-medium hover:bg-gray-800/50 flex items-center gap-2 rounded-lg transition-all hover:gap-2.5 text-white"
                                 >
                                     <Edit2 size={12} className="text-blue-400" />
                                     Modifier

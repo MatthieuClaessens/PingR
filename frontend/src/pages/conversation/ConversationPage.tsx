@@ -9,10 +9,10 @@ import type { Conversation } from "../../entities/conversation";
 import http from "../../api/http-common";
 import { getMyId } from "../../services/authenticationService";
 
-import { Navbar } from "../../components/globals/NavBar";
-import { ConversationHeader } from "../../components/conversation/ConversationHeader";
+import { NavBar } from "../../components/globals/NavBar";
 import { MessageBubble } from "../../components/conversation/MessageBubble";
 import { MessageInput } from "../../components/conversation/MessageInput";
+import { ConversationHeader } from "../../components/conversation/ConversationHeader";
 
 export default function ConversationPage() {
   const myId = getMyId();
@@ -100,7 +100,7 @@ export default function ConversationPage() {
       <Sidebar myId={myId} />
 
       <div className="flex-1 flex flex-col h-full text-white border-l border-[#2A2A2A]">
-        <Navbar onSelectConv={() => { }} />
+        <NavBar onSelectConv={() => { }} />
         {selectedConv ? (
           <>
             <ConversationHeader selectedConv={selectedConv} myId={myId} />

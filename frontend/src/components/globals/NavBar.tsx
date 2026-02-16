@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  Bell, Settings, User, Search, LogOut, 
-  ShieldCheck, X, UserPlus, MessageSquare 
+  Bell, Search, User, LogOut, 
+  ShieldCheck, MessageSquare 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import http from "../../api/http-common";
@@ -16,10 +16,10 @@ interface UserSearchResult {
 }
 
 interface NavbarProps {
-  onSelectConv: (id: number) => void;
+  onSelectConv?: (id: number) => void;
 }
 
-export const Navbar = ({ onSelectConv }: NavbarProps) => {
+export const NavBar = ({ onSelectConv }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
@@ -31,6 +31,17 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
   const handleLogout = () => {
     clearToken();
     navigate("/login");
+  };
+
+  const searchUsers = async (query: string) => {
+    try {
+      const response = await http.get<UserSearchResult[]>(`/user/search?q=${query}`);
+      setSearchResults(response.data);
+      setShowResults(true);
+    } catch (err) {
+      console.error("Erreur API:", err);
+      setSearchResults([]);
+    }
   };
 
   useEffect(() => {
@@ -56,17 +67,6 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
     return () => clearTimeout(timer);
   }, [searchQuery]);
 
-  const searchUsers = async (query: string) => {
-    try {
-      const response = await http.get<UserSearchResult[]>(`/user/search?q=${query}`);
-      setSearchResults(response.data);
-      setShowResults(true);
-    } catch (err) {
-      console.error("Erreur API:", err);
-      setSearchResults([]);
-    }
-  };
-
   const handleStartChat = async (targetId: number) => {
     try {
       const response = await http.post("/conversations", {
@@ -83,9 +83,8 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
       navigate(`/conversation/${convId}`);
       if (onSelectConv) onSelectConv(convId);
       
-    } catch (err: unknown) {
-      const errorMessage = err instanceof Error ? err.message : "Erreur inconnue";
-      console.error("Erreur discussion :", errorMessage);
+    } catch (err) {
+      console.error("Erreur discussion :", err);
     }
   };
 
@@ -112,7 +111,7 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
         </div>
 
         {showResults && searchQuery.length >= 2 && (
-          <div className="absolute top-full left-0 right-0 mt-2 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl overflow-hidden z-50">
+          <div className="absolute top-full left-0 right-0 mt-2 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl overflow-hidden z-50 shadow-black/80 animate-in fade-in slide-in-from-top-2 duration-200">
             {searchResults.length > 0 ? (
               searchResults.map((user) => (
                 <div key={user.accountId} className="flex items-center justify-between p-3 hover:bg-[#222222] transition-colors border-b border-[#2A2A2A] last:border-0 group">
@@ -129,9 +128,9 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
                   </div>
                   <button 
                     onClick={() => handleStartChat(user.accountId)}
-                    className="p-2 text-[#979797] hover:text-[#EEEEEE] rounded-lg transition"
+                    className="p-2 text-[#979797] hover:text-[#EF3C56] rounded-lg transition-colors bg-[#2A2A2A]/0 hover:bg-[#EF3C56]/10"
                   >
-                    <MessageSquare size={16} />
+                    <MessageSquare size={18} />
                   </button>
                 </div>
               ))
@@ -143,18 +142,25 @@ export const Navbar = ({ onSelectConv }: NavbarProps) => {
       </div>
 
       <div className="flex items-center gap-4">
-        <Bell size={20} className="text-[#979797] hover:text-[#EEEEEE] cursor-pointer" />
+        <Bell size={20} className="text-[#979797] hover:text-[#EEEEEE] cursor-pointer transition-colors" />
+        
         <div className="relative">
-          <div onClick={() => setIsOpen(!isOpen)} className="w-9 h-9 rounded-full bg-[#2A2A2A] flex items-center justify-center cursor-pointer border border-transparent hover:border-[#EF3C56]">
+          <div 
+            onClick={() => setIsOpen(!isOpen)} 
+            className="w-9 h-9 rounded-full bg-[#2A2A2A] flex items-center justify-center cursor-pointer border border-transparent hover:border-[#EF3C56] transition-all"
+          >
             <User size={20} className="text-[#979797]" />
           </div>
 
           {isOpen && (
-            <div className="absolute right-0 mt-3 w-56 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl overflow-hidden">
+            <div className="absolute right-0 mt-3 w-56 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl overflow-hidden z-50 animate-in fade-in zoom-in-95 duration-150">
               <div className="p-4 border-b border-[#2A2A2A]">
                 <p className="text-sm text-[#EEEEEE] font-bold">Mon Profil</p>
               </div>
-              <button onClick={handleLogout} className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 transition">
+              <button 
+                onClick={handleLogout} 
+                className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 transition-colors"
+              >
                 <LogOut size={16} /> Déconnexion
               </button>
             </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Navbar } from "../../components/globals/NavBar";
+import { NavBar } from "../../components/globals/NavBar";
 import Contacts from "../../components/home/Contacts";
 import { Sidebar } from "../../components/globals/SideBar";
 
@@ -20,7 +20,7 @@ export default function HomePage() {
 
   return (
     <main className="flex flex-col h-screen bg-[#1E1E1E] text-[#EEEEEE] overflow-hidden">
-      <Navbar 
+      <NavBar 
         onSearchResults={(results) => {
           setSearchResults(results);
           setShowSearchResults(results.length > 0);
