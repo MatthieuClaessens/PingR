@@ -24,7 +24,7 @@
 
 ---
 
-## 🎨 Design & Modeling (UML & MERISE)
+## 🎨 1. Design & Modeling (UML & MERISE)
 
 > **Visual & Data Engineering**: A rigorous prototyping and modeling phase was conducted to ensure a **Discord-like** seamless messaging experience and absolute data integrity.
 
@@ -40,55 +40,54 @@
 
 ---
 
-## 📸 Technical Showcase
-
-### 🛡️ Authentication & Session Guard
-| Client Interface | Session Storage (JWT Management) |
-| :--- | :--- |
-| <a href="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" target="_blank"><img src="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" alt="PingR UI"></a> | <a href="https://i.ibb.co/rRwzBBcC/image.png" target="_blank"><img src="https://i.ibb.co/rRwzBBcC/image.png" alt="PingR Debug"></a> |
-
-> **Pro Tip:** I migrated from `localStorage` to `sessionStorage` to ensure strict browser tab isolation. Sensitive tokens are automatically cleared when the tab is closed, preventing identity overlap.
-
----
-
-## 🛠️ Tech Stack & Methodology
-
-| Layer | Technologies |
-| :--- | :--- |
-| **Backend** | Java 17, Spring Boot 3.x, **Apache Tomcat (Embedded)** |
-| **Frontend** | React 18, Tailwind CSS, Lucide React |
-| **ORM & Persistence** | **Hibernate (JPA)**, **PostgreSQL 15** |
-| **DevOps & Tools** | **Docker**, **Postman**, Docker-Compose |
-| **Security** | Auth JWT (HS256), BCrypt, DTO Pattern |
-
----
-
-## ⚙️ Backend Architecture & API
+## ⚙️ 2. Backend Architecture & API
 
 The project follows a rigorous **N-Tier Architecture** to decouple concerns:
 1. **Controller Layer**: REST endpoints exposure and payload validation via Spring Web.
 2. **Service Layer**: Business logic, transaction management, and security checks.
 3. **Repository Layer**: Data Access via **Hibernate** and Spring Data JPA.
 
+### 🛠️ Tech Stack & Methodology
+| Layer | Technologies |
+| :--- | :--- |
+| **Backend** | Java 21, Spring Boot 3.x, **Apache Tomcat (Embedded)** |
+| **ORM & Persistence** | **Hibernate (JPA)**, **PostgreSQL 15** |
+| **Security** | Auth JWT (HS256), BCrypt, DTO Pattern |
+
 ### 📡 API Validation (Swagger & Postman)
 | Swagger UI Documentation | Postman Endpoint Testing |
 |:---:|:---:|
 | <a href="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" target="_blank"><img src="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" alt="Swagger UI"></a> | <a href="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" target="_blank"><img src="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" alt="Data Structure"></a> |
 
-> **Testing Strategy:** Beyond Swagger's documentation, all endpoints are verified via a **Postman Collection** to ensure JWT-protected route integrity and correct HTTP status code returns.
-
 ---
 
-## ✅ Quality Assurance & Environment
+## ✅ 3. Quality Assurance & DevOps
+
 <a href="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" target="_blank">
   <img src="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" alt="Unit Test Results">
 </a>
 
-> **Containerization:** The entire ecosystem (**Spring Boot**, **PostgreSQL**) is orchestrated using **Docker**, ensuring a "one-command" deployment and environment parity across different machines.
+> **Containerization:** The entire ecosystem (**Spring Boot**, **PostgreSQL**) is orchestrated using **Docker**, ensuring environment parity and "one-command" deployment.
 
 ---
 
-## 🚀 Installation
+## 📸 4. Technical Showcase (Frontend)
+
+### 🌐 UI & Multidirectional Messaging
+<a href="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" target="_blank">
+  <img src="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" alt="Front-end Preview">
+</a>
+
+### 🛡️ Authentication & Session Guard
+| Client Interface | Session Storage (JWT Management) |
+| :--- | :--- |
+| <a href="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" target="_blank"><img src="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" alt="PingR UI"></a> | <a href="https://i.ibb.co/rRwzBBcC/image.png" target="_blank"><img src="https://i.ibb.co/rRwzBBcC/image.png" alt="PingR Debug"></a> |
+
+> **Pro Tip:** I migrated from `localStorage` to `sessionStorage` to ensure strict browser tab isolation. Sensitive tokens are automatically cleared when the tab is closed.
+
+---
+
+## 🚀 5. Installation
 
 ```bash
 # Clone the repository
@@ -97,5 +96,5 @@ git clone https://github.com/MatthieuClaessens/PingR.git
 # Navigate to project
 cd PingR
 
-# Spin up the entire containerized stack
+# Spin up the entire stack via Docker
 docker-compose up --build
