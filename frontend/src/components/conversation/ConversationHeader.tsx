@@ -22,6 +22,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
     const searchRef = useRef<HTMLDivElement>(null);
+    const resultsRef = useRef<HTMLDivElement>(null);
 
     const others = selectedConv.participants?.filter(p => p.accountId !== myId) || [];
     const isGroup = selectedConv.conversationType === 'GROUP';
@@ -36,7 +37,6 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                 try {
                     const response = await http.get<UserSearchResult[]>(`/user/search?q=${searchQuery}`);
                     
-                    // Filtrage : on ne garde que les users qui ne sont pas DEJA dans la conversation
                     const filteredResults = response.data.filter(user => 
                         !selectedConv.participants.some(p => p.accountId === user.accountId)
                     );
@@ -54,10 +54,14 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
         return () => clearTimeout(timer);
     }, [searchQuery, selectedConv.participants]);
 
-    // Fermer si on clique ailleurs
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
-            if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+            if (
+                searchRef.current && 
+                !searchRef.current.contains(e.target as Node) &&
+                resultsRef.current &&
+                !resultsRef.current.contains(e.target as Node)
+            ) {
                 setIsSearching(false);
                 setSearchQuery("");
             }
@@ -127,7 +131,10 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
             </div>
 
             {isSearching && searchQuery.length >= 2 && (
-                <div className="absolute top-[75px] left-8 w-72 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden animate-in fade-in zoom-in duration-200">
+                <div 
+                    ref={resultsRef}
+                    className="absolute top-[75px] left-8 w-72 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl z-[9999] overflow-hidden animate-in fade-in zoom-in duration-200"
+                >
                     <div className="p-2">
                         <p className="text-[10px] uppercase tracking-widest text-gray-500 font-bold p-2">Résultats</p>
                         
@@ -135,7 +142,8 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                             searchResults.map((user) => (
                                 <div 
                                     key={user.accountId}
-                                    onClick={() => {
+                                    onMouseDown={(e) => {
+                                        e.preventDefault();
                                         onConfirmAdd(user.accountId);
                                         setIsSearching(false);
                                         setSearchQuery("");

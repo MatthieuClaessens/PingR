@@ -15,7 +15,11 @@ export const Sidebar = ({ myId }: SidebarProps) => {
 
     useEffect(() => {
         http.get("/conversations/all")
-            .then(res => setConversations(res.data))
+            .then(res => {
+                const convs = res.data.content || res.data;
+                console.log("📥 Conversations chargées:", convs);
+                setConversations(convs);
+            })
             .catch(err => console.error("Erreur sidebar:", err));
     }, []);
 

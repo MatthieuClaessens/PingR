@@ -30,17 +30,20 @@ export default function ConversationPage() {
     if (currentId) {
       setMyId(Number(currentId));
     } else {
-      console.error("Aucun ID utilisateur trouvé");
     }
   }, []);
 
   useEffect(() => {
     if (!id) return;
     
-    http.get<Conversation>(`/conversations/${id}`)
-      .then(res => setSelectedConv(res.data))
+    http.get(`/conversations/${id}`)
+      .then(res => {
+        const conv = (res.data as any).content 
+          ? (res.data as any).content[0] 
+          : res.data;
+        setSelectedConv(conv as Conversation);
+      })
       .catch(err => {
-        console.error("Erreur chargement conv:", err);
         navigate("/");
       });
   }, [id, navigate]);
@@ -56,7 +59,8 @@ export default function ConversationPage() {
           setMessages(data.content);
         }
       } catch (err) {
-        if (!cancelled) console.error("Erreur messages:", err);
+        if (!cancelled) 
+          console.error("Erreur messages:", err);
       }
     };
 
@@ -109,21 +113,26 @@ export default function ConversationPage() {
     }
   };
 
-  const handleAddUser = async (userId: number) => {
-    if (!selectedConv) return;
-    try {
-      const response = await http.post<Conversation>(
-        `/conversations/${selectedConv.conversationId}/participants/${userId}`
-      );
-      if (response.data.conversationId !== selectedConv.conversationId) {
-        navigate(`/conversation/${response.data.conversationId}`);
-      } else {
-        setSelectedConv(response.data);
-      }
-    } catch (err) {
-      alert("Action impossible");
+const handleAddUser = async (userId: number) => {
+  if (!selectedConv) {
+    return;
+  }
+  
+  try {
+    const url = `/conversations/${selectedConv.conversationId}/participants/${userId}`;
+    
+    const response = await http.post<Conversation>(url);
+        
+    if (response.data.conversationId !== selectedConv.conversationId) {
+      navigate(`/conversation/${response.data.conversationId}`);
+    } else {
+      setSelectedConv(response.data);
     }
-  };
+  } catch (err) {
+    alert("Action impossible: " + (err as any).response?.data?.message || (err as any).message);
+  }
+};
+
 
   if (myId === null) {
     return <div className="h-screen bg-[#1E1E1E] flex items-center justify-center text-white">Chargement...</div>;
