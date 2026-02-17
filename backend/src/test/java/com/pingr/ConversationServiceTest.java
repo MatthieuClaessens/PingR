@@ -39,7 +39,6 @@ class ConversationServiceTest {
 
     @Test
     void createConversation_ShouldReturnExisting_WhenSingleConversationExists() {
-        // GIVEN
         Long requesterId = 1L;
         Long targetId = 2L;
         Set<Long> targetParticipants = Set.of(targetId);

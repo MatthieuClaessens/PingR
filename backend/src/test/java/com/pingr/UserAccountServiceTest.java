@@ -37,7 +37,6 @@ class UserAccountServiceTest {
 
     @Test
     void createUserAccount_ShouldHashPasswordAndSaveUser() {
-        // Arrange
         String rawPassword = "password123";
         String encodedPassword = "hashed_password";
         when(passwordEncoder.encode(rawPassword)).thenReturn(encodedPassword);

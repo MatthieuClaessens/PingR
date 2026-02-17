@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState, useEffect, useRef, useMemo } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Sidebar } from "../../components/globals/SideBar";
 import type { Message } from "../../entities/message";
@@ -21,6 +21,7 @@ export default function ConversationPage() {
   const [myId, setMyId] = useState<number | null>(null);
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
+  const [sidebarOpen, setSidebarOpen] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -29,7 +30,6 @@ export default function ConversationPage() {
     const currentId = getMyId();
     if (currentId) {
       setMyId(Number(currentId));
-    } else {
     }
   }, []);
 
@@ -43,7 +43,7 @@ export default function ConversationPage() {
           : res.data;
         setSelectedConv(conv as Conversation);
       })
-      .catch(err => {
+      .catch(() => {
         navigate("/");
       });
   }, [id, navigate]);
@@ -59,8 +59,7 @@ export default function ConversationPage() {
           setMessages(data.content);
         }
       } catch (err) {
-        if (!cancelled) 
-          console.error("Erreur messages:", err);
+        if (!cancelled) console.error("Erreur messages:", err);
       }
     };
 
@@ -86,7 +85,7 @@ export default function ConversationPage() {
     try {
       const savedMessage = await messageService.createMessage(selectedConv.conversationId, text);
       setMessages(prev => [...prev, savedMessage]);
-    } catch (err) {
+    } catch {
       alert("Erreur d'envoi");
     }
   };
@@ -98,7 +97,7 @@ export default function ConversationPage() {
       setMessages(prev => prev.map(m =>
         m.messageId === messageId ? { ...m, messageContent: newText } : m
       ));
-    } catch (err) {
+    } catch {
       alert("Erreur modification");
     }
   };
@@ -108,42 +107,44 @@ export default function ConversationPage() {
     try {
       await messageService.deleteMessage(selectedConv.conversationId, messageId);
       setMessages(prev => prev.filter(m => m.messageId !== messageId));
-    } catch (err) {
+    } catch {
       alert("Erreur suppression");
     }
   };
 
-const handleAddUser = async (userId: number) => {
-  if (!selectedConv) {
-    return;
-  }
-  
-  try {
-    const url = `/conversations/${selectedConv.conversationId}/participants/${userId}`;
-    
-    const response = await http.post<Conversation>(url);
-        
-    if (response.data.conversationId !== selectedConv.conversationId) {
-      navigate(`/conversation/${response.data.conversationId}`);
-    } else {
-      setSelectedConv(response.data);
+  const handleAddUser = async (userId: number) => {
+    if (!selectedConv) return;
+    try {
+      const url = `/conversations/${selectedConv.conversationId}/participants/${userId}`;
+      const response = await http.post<Conversation>(url);
+      if (response.data.conversationId !== selectedConv.conversationId) {
+        navigate(`/conversation/${response.data.conversationId}`);
+      } else {
+        setSelectedConv(response.data);
+      }
+    } catch (err) {
+      alert("Action impossible: " + (err as any).response?.data?.message || (err as any).message);
     }
-  } catch (err) {
-    alert("Action impossible: " + (err as any).response?.data?.message || (err as any).message);
-  }
-};
-
+  };
 
   if (myId === null) {
-    return <div className="h-screen bg-[#1E1E1E] flex items-center justify-center text-white">Chargement...</div>;
+    return (
+      <div className="h-screen bg-[#1E1E1E] flex items-center justify-center text-white">
+        Chargement...
+      </div>
+    );
   }
 
   return (
-    <div key={id} className="flex h-screen w-full bg-[#1E1E1E] overflow-hidden">
-      <Sidebar myId={myId} />
+    <div className="flex h-screen w-full bg-[#1E1E1E] overflow-hidden relative">
+      <Sidebar myId={myId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
 
       <div className="flex-1 flex flex-col h-full text-white border-l border-[#2A2A2A]">
-        <NavBar onSelectConv={() => { }} />
+        <NavBar 
+          onSelectConv={() => {}} 
+          onMenuClick={() => setSidebarOpen(true)}
+          showMenuButton={true}
+        />
         
         {selectedConv ? (
           <>
@@ -155,17 +156,16 @@ const handleAddUser = async (userId: number) => {
 
             <main
               ref={messagesContainerRef}
-              className="flex-1 overflow-y-auto p-6 flex flex-col gap-4 bg-[#1E1E1E]"
+              className="flex-1 overflow-y-auto p-3 sm:p-6 flex flex-col gap-3 sm:gap-4 bg-[#1E1E1E]"
             >
               {messages.map((msg) => {
                 const isMe = Number(msg.userAccount?.accountId) === Number(myId);
-                
                 return (
                   <MessageBubble
                     key={msg.messageId}
                     msg={msg}
                     isMe={isMe}
-                    isGroup={selectedConv.conversationType === 'GROUP'}
+                    isGroup={selectedConv.conversationType === "GROUP"}
                     onEdit={handleEditMessage}
                     onDelete={handleDeleteMessage}
                   />
@@ -177,9 +177,9 @@ const handleAddUser = async (userId: number) => {
             <MessageInput
               onSendMessage={handleSendMessage}
               placeholderName={
-                selectedConv.conversationType === 'SINGLE' 
-                ? (selectedConv.participants?.find((p: AccountShortInfo) => p.accountId !== myId)?.accountName || "Discussion")
-                : "Message de groupe"
+                selectedConv.conversationType === "SINGLE"
+                  ? (selectedConv.participants?.find((p: AccountShortInfo) => p.accountId !== myId)?.accountName || "Discussion")
+                  : "Message de groupe"
               }
             />
           </>

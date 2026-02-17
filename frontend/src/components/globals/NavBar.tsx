@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  Bell, Search, User, LogOut, 
+  Bell, Search, User, LogOut, Menu,
   ShieldCheck, MessageSquare 
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -17,9 +17,11 @@ interface UserSearchResult {
 
 interface NavbarProps {
   onSelectConv?: (id: number) => void;
+  onMenuClick?: () => void;
+  showMenuButton?: boolean;
 }
 
-export const NavBar = ({ onSelectConv }: NavbarProps) => {
+export const NavBar = ({ onSelectConv, onMenuClick, showMenuButton = false }: NavbarProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
@@ -92,6 +94,16 @@ export const NavBar = ({ onSelectConv }: NavbarProps) => {
     <nav className="h-14 w-full bg-[#181818] border-b border-[#2A2A2A] flex items-center justify-between px-4 relative z-50">
       
       <div className="flex items-center gap-3">
+        {showMenuButton && (
+          <button
+            onClick={onMenuClick}
+            className="lg:hidden p-2 hover:bg-white/10 rounded-lg transition-colors mr-1"
+            aria-label="Ouvrir le menu"
+          >
+            <Menu size={22} className="text-[#EEEEEE]" />
+          </button>
+        )}
+        
         <h3 onClick={() => navigate('/home')} className="font-['Salsa'] text-4xl text-[#EEEEEE] cursor-pointer hover:scale-105 transition duration-300">
           Ping<span className="text-[#EF3C56]">R</span>
         </h3>
