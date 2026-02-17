@@ -1,88 +1,100 @@
 <div align="center">
   <div style="background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); padding: 50px 20px; border-radius: 15px; margin-bottom: 20px;">
     <h1 style="color: white; margin: 0; font-size: 4em; font-family: sans-serif; letter-spacing: 4px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">PingR</h1>
-    <p style="color: rgba(255,255,255,0.9); margin-top: 10px; font-size: 1.4em; font-weight: 300;">Messagerie Instantanée RESTful</p>
+    <p style="color: rgba(255,255,255,0.9); margin-top: 10px; font-size: 1.4em; font-weight: 300;">RESTful Instant Messaging System</p>
   </div>
 
-  <h3>🚀 Projet de Certification CDA | Promotion 2026</h3>
+  <h3>🚀 Software Engineering Capstone Project | Class of 2026</h3>
   
   <p>
-    <img src="https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=java" />
-    <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot" />
-    <img src="https://img.shields.io/badge/React-2025-61DAFB?style=for-the-badge&logo=react" />
-    <img src="https://img.shields.io/badge/Security-JWT_HS256-black?style=for-the-badge&logo=jsonwebtokens" />
+    <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" /> &nbsp;
+    <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot" /> &nbsp;
+    <img src="https://img.shields.io/badge/React-2026-61DAFB?style=for-the-badge&logo=react" /> &nbsp;
+    <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" /> &nbsp;
     <img src="https://img.shields.io/badge/PostgreSQL-Ready-4169E1?style=for-the-badge&logo=postgresql" />
   </p>
 </div>
 
 ---
 
-## 📖 Présentation du Projet
-**PingR** est une plateforme de communication moderne développée pour la certification **Concepteur Développeur d'Applications (CDA)**. 
+## 📖 Overview
+**PingR** is a high-availability communication platform developed as a **Software Engineering** flagship project. Heavily inspired by the user experience of **Discord**, this release focuses on establishing a robust **multidirectional communication flow** and resolving critical identity management issues in multi-tenant environments.
 
-L'objectif principal était de concevoir un système robuste capable de gérer des échanges privés et groupés, avec une sécurité maximale via une architecture **stateless** et une gestion fine des droits d'accès (RBAC).
-
-> **💡 Décision d'Ingénierie :** Pour simuler l'instantanéité, PingR utilise une stratégie de **Short Polling** (cycle de 5s). Ce choix permet de garantir une cohérence d'état Client/Serveur tout en restant sur une infrastructure API REST standard, sécurisée et scalable.
+> **💡 Engineering Decision:** To simulate real-time interaction, PingR implements a **Short Polling** strategy (5s cycles). This choice ensures Client/Server state consistency while operating on a standard, secure, and scalable REST API infrastructure.
 
 ---
 
-## 🎨 Conception & Méthodologie
-La réalisation de ce projet a suivi une démarche de conception logicielle complète :
+## 🎨 1. Design & Modeling (UML & MERISE)
 
-* **Maquettage UI/UX (Figma)** : Design de l'interface utilisateur haute fidélité pour optimiser les flux de navigation.
-* **Modélisation MERISE (Looping)** : Conception du MCD et du MLD pour garantir une structure de données normalisée et performante.
-* **Modélisation UML (StarUML)** : Réalisation des diagrammes de cas d'utilisation, de séquence et de classes pour structurer la logique applicative.
+> **Visual & Data Engineering**: A rigorous prototyping and modeling phase was conducted to ensure a **Discord-like** seamless messaging experience and absolute data integrity.
 
-
-
----
-
-## 🛠️ Stack Technique
-
-| Couche | Technologies |
+### 🖋️ UI/UX Prototyping (Figma)
+| Desktop Interface Design | Component & User Flow Architecture |
 | :--- | :--- |
-| **Backend** | Java 17, Spring Boot 3.x, Spring Security |
-| **Frontend** | React, Tailwind CSS, Lucide React |
-| **Persistance** | **PostgreSQL**, Hibernate, Spring Data JPA |
-| **Sécurité** | Auth JWT (HS256), DTO Pattern, Password Hashing |
-| **Doc & Tests** | Swagger (OpenAPI 3), JUnit 5, Mockito |
+| <a href="https://i.ibb.co/N2s14bkG/Capture-d-cran-2026-02-17-001122.png" target="_blank"><img src="https://i.ibb.co/N2s14bkG/Capture-d-cran-2026-02-17-001122.png" alt="Figma Desktop"></a> | <a href="https://i.ibb.co/GvRrqj2t/Capture-d-cran-2026-02-17-000814.png" target="_blank"><img src="https://i.ibb.co/GvRrqj2t/Capture-d-cran-2026-02-17-000814.png" alt="Figma Architecture"></a> |
+
+### 📊 Database & Logic
+| Class Diagram (DTO Structure) | Conceptual Data Model (MCD) |
+| :--- | :--- |
+| <a href="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" target="_blank"><img src="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" alt="UML Class"></a> | <a href="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" target="_blank"><img src="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" alt="MCD Schema"></a> |
 
 ---
 
-## ✨ Fonctionnalités Clés
+## ⚙️ 2. Backend Architecture & API
 
-- 🔐 **Sécurité Avancée** : Authentification par JWT. Les données sensibles ne sont jamais exposées grâce à l'étanchéité des **DTOs**.
-- 💬 **Moteur de Messagerie** : 
-    - Logique d'unicité sur les conversations privées (gestion stricte des participants).
-    - Support complet des groupes de discussion.
-    - Contrôle d'accès : Vérification systématique de l'appartenance à une conversation (Custom Security Guards).
-- 🔍 **UX Dynamique** : Recherche d'utilisateurs et interface réactive conçue avec React.
+The project follows a rigorous **N-Tier Architecture** to decouple concerns:
+1. **Controller Layer**: REST endpoints exposure and payload validation via Spring Web.
+2. **Service Layer**: Business logic, transaction management, and security checks.
+3. **Repository Layer**: Data Access via **Hibernate** and Spring Data JPA.
 
----
+### 🛠️ Tech Stack & Methodology
+| Layer | Technologies |
+| :--- | :--- |
+| **Backend** | Java 21, Spring Boot 3.x, **Apache Tomcat (Embedded)** |
+| **ORM & Persistence** | **Hibernate (JPA)**, **PostgreSQL 15** |
+| **Security** | Auth JWT (HS256), BCrypt, DTO Pattern |
 
-## 🏗️ Architecture Backend
-
-Le projet suit une **architecture en couches** (N-Tier) :
-
-
-
-1.  **Layer Controller** : Points d'entrée REST et validation des payloads.
-2.  **Layer Service** : Logique métier (Validation, droits, règles de gestion).
-3.  **Layer Repository** : Abstraction de la persistance PostgreSQL via Spring Data JPA.
-4.  **DTOs & Mappers** : Isolation entre le modèle de données et la couche de présentation.
+### 📡 API Validation (Swagger & Postman)
+| Swagger UI Documentation | Postman Endpoint Testing |
+|:---:|:---:|
+| <a href="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" target="_blank"><img src="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" alt="Swagger UI"></a> | <a href="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" target="_blank"><img src="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" alt="Data Structure"></a> |
 
 ---
 
-## 📡 Documentation API (Swagger)
+## ✅ 3. Quality Assurance & DevOps
 
-🔗 **Lien local :** `http://localhost:8080/swagger-ui/index.html`
+<a href="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" target="_blank">
+  <img src="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" alt="Unit Test Results">
+</a>
+
+> **Containerization:** The entire ecosystem (**Spring Boot**, **PostgreSQL**) is orchestrated using **Docker**, ensuring environment parity and "one-command" deployment.
 
 ---
 
-## ⚙️ Installation & Lancement
+## 📸 4. Technical Showcase (Frontend)
 
-### Lancement via Docker (Recommandé)
+### 🌐 UI & Multidirectional Messaging
+<a href="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" target="_blank">
+  <img src="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" alt="Front-end Preview">
+</a>
+
+### 🛡️ Authentication & Session Guard
+| Client Interface | Session Storage (JWT Management) |
+| :--- | :--- |
+| <a href="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" target="_blank"><img src="https://i.ibb.co/m54y03jP/Capture-d-cran-2026-02-17-000001.png" alt="PingR UI"></a> | <a href="https://i.ibb.co/rRwzBBcC/image.png" target="_blank"><img src="https://i.ibb.co/rRwzBBcC/image.png" alt="PingR Debug"></a> |
+
+> **Pro Tip:** I migrated from `localStorage` to `sessionStorage` to ensure strict browser tab isolation. Sensitive tokens are automatically cleared when the tab is closed.
+
+---
+
+## 🚀 5. Installation
+
 ```bash
+# Clone the repository
 git clone https://github.com/MatthieuClaessens/PingR.git
+
+# Navigate to project
 cd PingR
+
+# Spin up the entire stack via Docker
 docker-compose up --build
