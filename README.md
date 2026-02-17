@@ -8,10 +8,10 @@
   
   <p>
     <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" /> &nbsp;
-    <img src="https://img.shields.io/badge/Spring_Boot-3.x-6DB33F?style=for-the-badge&logo=springboot" /> &nbsp;
+    <img src="https://img.shields.io/badge/Spring_Boot-3.5.7-6DB33F?style=for-the-badge&logo=springboot" /> &nbsp;
     <img src="https://img.shields.io/badge/React-2026-61DAFB?style=for-the-badge&logo=react" /> &nbsp;
     <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" /> &nbsp;
-    <img src="https://img.shields.io/badge/PostgreSQL-Ready-4169E1?style=for-the-badge&logo=postgresql" />
+    <img src="https://img.shields.io/badge/PostgreSQL-18.1-4169E1?style=for-the-badge&logo=postgresql" />
   </p>
 </div>
 
@@ -26,7 +26,7 @@
 
 ## 🎨 1. Design & Modeling (UML & MERISE)
 
-> **Visual & Data Engineering**: A rigorous prototyping and modeling phase was conducted to ensure a **Discord-like** seamless messaging experience and absolute data integrity.
+> **Visual & Data Engineering**: A rigorous prototyping and modeling phase was conducted to ensure a seamless messaging experience and absolute data integrity.
 
 ### 🖋️ UI/UX Prototyping (Figma)
 | Desktop Interface Design | Component & User Flow Architecture |
@@ -50,28 +50,37 @@ The project follows a rigorous **N-Tier Architecture** to decouple concerns:
 ### 🛠️ Tech Stack & Methodology
 | Layer | Technologies |
 | :--- | :--- |
-| **Backend** | Java 21, Spring Boot 3.x, **Apache Tomcat (Embedded)** |
-| **ORM & Persistence** | **Hibernate (JPA)**, **PostgreSQL 15** |
+| **Backend Framework** | **Spring Boot 3.5.7** |
+| **Application Server** | **Apache Tomcat 10.1.x (Embedded)** |
+| **ORM & Persistence** | **Hibernate (JPA)**, **PostgreSQL 18.1** |
 | **Security** | Auth JWT (HS256), BCrypt, DTO Pattern |
-
-### 📡 API Validation (Swagger & Postman)
-| Swagger UI Documentation | Postman Endpoint Testing |
-|:---:|:---:|
-| <a href="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" target="_blank"><img src="https://i.ibb.co/HTkkf1R0/Capture-d-cran-2026-02-16-233603.png" alt="Swagger UI"></a> | <a href="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" target="_blank"><img src="https://i.ibb.co/C5M2Zhf4/Capture-d-cran-2026-02-16-233850.png" alt="Data Structure"></a> |
 
 ---
 
-## ✅ 3. Quality Assurance & DevOps
+## 🌐 3. Network & Deployment Architecture (Docker)
+
+The infrastructure is fully containerized to ensure portability and environment parity. The inclusion of **Adminer** allows for streamlined database management during the development lifecycle.
+
+| Service | External Port | Internal Port | Role |
+| :--- | :--- | :--- | :--- |
+| **Frontend (dev)** | `5173` | `5173` | React UI (Vite) |
+| **Backend API** | `8080` | `8080` | Spring Boot API |
+| **Database** | `5432` | `5432` | PostgreSQL Server |
+| **Adminer** | `8081` | `8080` | DB Management GUI |
+
+---
+
+## ✅ 4. Quality Assurance & DevOps
 
 <a href="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" target="_blank">
   <img src="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" alt="Unit Test Results">
 </a>
 
-> **Containerization:** The entire ecosystem (**Spring Boot**, **PostgreSQL**) is orchestrated using **Docker**, ensuring environment parity and "one-command" deployment.
+> **Containerization:** The entire ecosystem is orchestrated via **Docker Compose**, ensuring "one-command" deployment and environment isolation.
 
 ---
 
-## 📸 4. Technical Showcase (Frontend)
+## 📸 5. Technical Showcase (Frontend)
 
 ### 🌐 UI & Multidirectional Messaging
 <a href="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" target="_blank">
@@ -87,7 +96,7 @@ The project follows a rigorous **N-Tier Architecture** to decouple concerns:
 
 ---
 
-## 🚀 5. Installation
+## 🚀 6. Installation
 
 ```bash
 # Clone the repository
