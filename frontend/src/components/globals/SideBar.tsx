@@ -1,29 +1,18 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { X, Users } from "lucide-react";
-import http from "../../api/http-common";
 import type { Conversation } from "../../entities/conversation";
 
 export interface SidebarProps {
     myId: number;
     isOpen?: boolean;
     onClose?: () => void;
+    conversations: Conversation[];
 }
 
-export const Sidebar = ({ myId, isOpen = true, onClose }: SidebarProps) => {
-    const [conversations, setConversations] = useState<Conversation[]>([]);
+export const Sidebar = ({ myId, isOpen = true, onClose, conversations }: SidebarProps) => {
     const navigate = useNavigate();
-
-    useEffect(() => {
-        http.get("/conversations/all")
-            .then(res => {
-                const convs = res.data.content || res.data;
-                setConversations(convs);
-            })
-            .catch(err => console.error("Erreur sidebar:", err));
-    }, []);
 
     const handleConvClick = (convId: number) => {
         navigate(`/conversation/${convId}`);
