@@ -147,7 +147,7 @@ export default function HomePage() {
                   <div className="mt-8 pt-8 border-t border-[#1A1A1A]">
                     <div className="flex items-center gap-3 text-[#444]">
                       <MessageCircle size={20} />
-                      <span className="text-xs font-bold uppercase tracking-widest">v1.1.0 Stable</span>
+                      <span className="text-xs font-bold uppercase tracking-widest">v1.0.0 Stable</span>
                     </div>
                   </div>
                 </div>
