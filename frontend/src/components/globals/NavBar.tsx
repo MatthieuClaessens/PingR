@@ -127,7 +127,7 @@ export const NavBar = ({
             value={searchQuery}
             onFocus={() => searchQuery.length >= 2 && setShowResults(true)}
             onChange={(e) => setSearchQuery(e.target.value)}
-            placeholder="Rechercher..."
+            placeholder="Rechercher un utilisateur..."
             className="w-full bg-transparent text-sm text-[#EEEEEE] px-2 sm:px-3 py-1.5 outline-none placeholder:text-[#555555] min-w-0"
           />
         </div>
