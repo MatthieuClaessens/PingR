@@ -13,8 +13,6 @@ import { MessageBubble } from "../../components/conversation/MessageBubble";
 import { MessageInput } from "../../components/conversation/MessageInput";
 import { ConversationHeader } from "../../components/conversation/ConversationHeader";
 
-console.log("Module ConversationPage chargé à:", new Date().toISOString());
-
 export default function ConversationPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -23,32 +21,38 @@ export default function ConversationPage() {
   const [selectedConv, setSelectedConv] = useState<Conversation | null>(null);
   const [messages, setMessages] = useState<Message[]>([]);
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [conversations, setConversations] = useState<Conversation[]>([]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const currentId = getMyId();
-    console.log("DEBUG - My ID récupéré:", currentId);
     if (currentId) {
       setMyId(Number(currentId));
     }
   }, []);
 
   useEffect(() => {
+    http.get("/conversations/all")
+      .then(res => {
+        const data = res.data.content || res.data;
+        setConversations(data);
+      })
+      .catch(err => {});
+  }, []);
+
+  useEffect(() => {
     if (!id) return;
-    console.log("DEBUG - ID de conversation détecté dans l'URL:", id);
     
     http.get(`/conversations/${id}`)
       .then(res => {
         const conv = (res.data as any).content 
           ? (res.data as any).content[0] 
           : res.data;
-        console.log("DEBUG - Conversation chargée avec succès:", conv);
         setSelectedConv(conv as Conversation);
       })
       .catch(err => {
-        console.error("DEBUG - Erreur chargement conv:", err);
         navigate("/");
       });
   }, [id, navigate]);
@@ -61,11 +65,10 @@ export default function ConversationPage() {
       try {
         const data = await messageService.getMessagesByConversationId(selectedConv.conversationId);
         if (!cancelled) {
-          console.log(`DEBUG - ${data.content.length} messages récupérés`);
           setMessages(data.content);
         }
       } catch (err) {
-        if (!cancelled) console.error("DEBUG - Erreur messages:", err);
+        if (!cancelled) {}
       }
     };
 
@@ -92,7 +95,6 @@ export default function ConversationPage() {
       const savedMessage = await messageService.createMessage(selectedConv.conversationId, text);
       setMessages(prev => [...prev, savedMessage]);
     } catch (err) {
-      console.error("DEBUG - Ervoi message raté:", err);
       alert("Erreur d'envoi");
     }
   };
@@ -104,9 +106,7 @@ export default function ConversationPage() {
       setMessages(prev => prev.map(m =>
         m.messageId === messageId ? { ...m, messageContent: newText } : m
       ));
-    } catch (err) {
-      console.error("DEBUG - Edit raté:", err);
-    }
+    } catch (err) {}
   };
 
   const handleDeleteMessage = async (messageId: number) => {
@@ -114,9 +114,7 @@ export default function ConversationPage() {
     try {
       await messageService.deleteMessage(selectedConv.conversationId, messageId);
       setMessages(prev => prev.filter(m => m.messageId !== messageId));
-    } catch (err) {
-      console.error("DEBUG - Delete raté:", err);
-    }
+    } catch (err) {}
   };
 
   const handleAddUser = async (userId: number) => {
@@ -124,15 +122,13 @@ export default function ConversationPage() {
     try {
       const url = `/conversations/${selectedConv.conversationId}/participants/${userId}`;
       const response = await http.post<Conversation>(url);
-      console.log("DEBUG - Utilisateur ajouté, réponse:", response.data);
       if (response.data.conversationId !== selectedConv.conversationId) {
         navigate(`/conversation/${response.data.conversationId}`);
       } else {
         setSelectedConv(response.data);
       }
     } catch (err) {
-        console.error("DEBUG - Add user raté:", err);
-        alert("Action impossible");
+      alert("Action impossible");
     }
   };
 
@@ -147,7 +143,7 @@ export default function ConversationPage() {
 
   return (
     <div className="flex h-screen w-full bg-[#1E1E1E] overflow-hidden relative">
-      <Sidebar myId={myId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} />
+      <Sidebar myId={myId} isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} conversations={conversations} />
 
       <div className="flex-1 flex flex-col h-full text-white border-l border-[#2A2A2A]">
         <NavBar 
@@ -196,8 +192,7 @@ export default function ConversationPage() {
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-500 italic font-medium">
             <div className="text-center">
-                <p>Aucune discussion sélectionnée.</p>
-                <p className="text-xs mt-2">ID actuel dans l'URL : {id || "aucun"}</p>
+              <p>Aucune discussion sélectionnée.</p>
             </div>
           </div>
         )}
