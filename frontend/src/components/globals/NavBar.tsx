@@ -2,8 +2,9 @@
 
 import React, { useState, useEffect, useRef } from "react";
 import { 
-  Bell, Search, User, LogOut, Menu,
-  ShieldCheck, MessageSquare 
+  Bell, Search, User, Menu,
+  ShieldCheck, MessageSquare, 
+  Power
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import http from "../../api/http-common";
@@ -173,7 +174,7 @@ export const NavBar = ({ onSelectConv, onMenuClick, showMenuButton = false }: Na
                 onClick={handleLogout} 
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 transition-colors"
               >
-                <LogOut size={16} /> Déconnexion
+                <Power size={16} /> Déconnexion
               </button>
             </div>
           )}

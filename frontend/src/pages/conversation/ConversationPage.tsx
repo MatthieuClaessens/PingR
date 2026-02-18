@@ -8,11 +8,12 @@ import { messageService } from "../../services/messageService";
 import type { Conversation, AccountShortInfo } from "../../entities/conversation";
 import http from "../../api/http-common";
 import { getMyId } from "../../services/authenticationService";
-
 import { NavBar } from "../../components/globals/NavBar";
 import { MessageBubble } from "../../components/conversation/MessageBubble";
 import { MessageInput } from "../../components/conversation/MessageInput";
 import { ConversationHeader } from "../../components/conversation/ConversationHeader";
+
+console.log("Module ConversationPage chargé à:", new Date().toISOString());
 
 export default function ConversationPage() {
   const { id } = useParams();
@@ -28,6 +29,7 @@ export default function ConversationPage() {
 
   useEffect(() => {
     const currentId = getMyId();
+    console.log("DEBUG - My ID récupéré:", currentId);
     if (currentId) {
       setMyId(Number(currentId));
     }
@@ -35,15 +37,18 @@ export default function ConversationPage() {
 
   useEffect(() => {
     if (!id) return;
+    console.log("DEBUG - ID de conversation détecté dans l'URL:", id);
     
     http.get(`/conversations/${id}`)
       .then(res => {
         const conv = (res.data as any).content 
           ? (res.data as any).content[0] 
           : res.data;
+        console.log("DEBUG - Conversation chargée avec succès:", conv);
         setSelectedConv(conv as Conversation);
       })
-      .catch(() => {
+      .catch(err => {
+        console.error("DEBUG - Erreur chargement conv:", err);
         navigate("/");
       });
   }, [id, navigate]);
@@ -56,10 +61,11 @@ export default function ConversationPage() {
       try {
         const data = await messageService.getMessagesByConversationId(selectedConv.conversationId);
         if (!cancelled) {
+          console.log(`DEBUG - ${data.content.length} messages récupérés`);
           setMessages(data.content);
         }
       } catch (err) {
-        if (!cancelled) console.error("Erreur messages:", err);
+        if (!cancelled) console.error("DEBUG - Erreur messages:", err);
       }
     };
 
@@ -85,7 +91,8 @@ export default function ConversationPage() {
     try {
       const savedMessage = await messageService.createMessage(selectedConv.conversationId, text);
       setMessages(prev => [...prev, savedMessage]);
-    } catch {
+    } catch (err) {
+      console.error("DEBUG - Ervoi message raté:", err);
       alert("Erreur d'envoi");
     }
   };
@@ -97,8 +104,8 @@ export default function ConversationPage() {
       setMessages(prev => prev.map(m =>
         m.messageId === messageId ? { ...m, messageContent: newText } : m
       ));
-    } catch {
-      alert("Erreur modification");
+    } catch (err) {
+      console.error("DEBUG - Edit raté:", err);
     }
   };
 
@@ -107,8 +114,8 @@ export default function ConversationPage() {
     try {
       await messageService.deleteMessage(selectedConv.conversationId, messageId);
       setMessages(prev => prev.filter(m => m.messageId !== messageId));
-    } catch {
-      alert("Erreur suppression");
+    } catch (err) {
+      console.error("DEBUG - Delete raté:", err);
     }
   };
 
@@ -117,20 +124,23 @@ export default function ConversationPage() {
     try {
       const url = `/conversations/${selectedConv.conversationId}/participants/${userId}`;
       const response = await http.post<Conversation>(url);
+      console.log("DEBUG - Utilisateur ajouté, réponse:", response.data);
       if (response.data.conversationId !== selectedConv.conversationId) {
         navigate(`/conversation/${response.data.conversationId}`);
       } else {
         setSelectedConv(response.data);
       }
     } catch (err) {
-      alert("Action impossible: " + (err as any).response?.data?.message || (err as any).message);
+        console.error("DEBUG - Add user raté:", err);
+        alert("Action impossible");
     }
   };
 
   if (myId === null) {
     return (
-      <div className="h-screen bg-[#1E1E1E] flex items-center justify-center text-white">
-        Chargement...
+      <div className="h-screen bg-[#1E1E1E] flex flex-col items-center justify-center text-white">
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#EF3C56] mb-4"></div>
+        <p>Initialisation du profil...</p>
       </div>
     );
   }
@@ -185,7 +195,10 @@ export default function ConversationPage() {
           </>
         ) : (
           <div className="flex-1 flex items-center justify-center text-gray-500 italic font-medium">
-            Sélectionne une discussion pour commencer à pinger.
+            <div className="text-center">
+                <p>Aucune discussion sélectionnée.</p>
+                <p className="text-xs mt-2">ID actuel dans l'URL : {id || "aucun"}</p>
+            </div>
           </div>
         )}
       </div>

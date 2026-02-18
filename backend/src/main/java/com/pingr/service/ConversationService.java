@@ -190,9 +190,14 @@ public class ConversationService {
         Conversation conversation = conversationRepository.findById(conversationId)
                 .orElseThrow(() -> new EntityNotFoundException(CONVERSATION_NOT_FOUND));
 
+        if (conversation.getConversationType() == ConversationType.SINGLE) {
+            throw new IllegalArgumentException("Impossible de quitter une conversation privée.");
+        }
+
         boolean removed = conversation.getUserAccounts().removeIf(u -> u.getAccountId().equals(accountId));
+
         if (!removed) {
-            throw new SecurityException("You are not a participant of this conversation");
+            throw new SecurityException("Vous ne faites pas partie de ce groupe.");
         }
 
         if (conversation.getUserAccounts().isEmpty()) {
@@ -200,13 +205,11 @@ public class ConversationService {
             return;
         }
 
-        if (conversation.getConversationType() == ConversationType.GROUP
-                && accountId.equals(conversation.getCreatorId())) {
-            UserAccount nextCreator = conversation.getUserAccounts().stream()
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalStateException("Conversation should not be empty"));
+        if (accountId.equals(conversation.getCreatorId())) {
+            UserAccount nextCreator = conversation.getUserAccounts().iterator().next();
             conversation.setCreatorId(nextCreator.getAccountId());
         }
+
         conversationRepository.save(conversation);
     }
 }
