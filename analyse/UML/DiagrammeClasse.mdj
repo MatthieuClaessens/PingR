@@ -754,7 +754,7 @@
 											"top": 893,
 											"width": 175.54150390625,
 											"height": 13,
-											"text": "-conversationType {FK} {id}",
+											"text": "-conversationType",
 											"horizontalAlignment": 0
 										},
 										{
@@ -3353,9 +3353,8 @@
 							"_parent": {
 								"$ref": "AAAAAAGa9bk74Fdfa5k="
 							},
-							"name": "conversationType {FK} {id}",
-							"visibility": "private",
-							"type": ""
+							"name": "conversationType",
+							"visibility": "private"
 						},
 						{
 							"_type": "UMLAttribute",
@@ -3436,7 +3435,8 @@
 								"$ref": "AAAAAAGa9br7TleRMIc="
 							},
 							"name": "messageContent",
-							"visibility": "private"
+							"visibility": "private",
+							"type": ""
 						},
 						{
 							"_type": "UMLAttribute",
