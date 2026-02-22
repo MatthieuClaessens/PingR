@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import { NavBar } from "../../components/globals/NavBar";
 import { Sidebar } from "../../components/globals/SideBar";
 import http from "../../api/http-common";
+import { getMyId } from "../../services/authenticationService";
 import { 
   Users, 
   MessageCircle, 
@@ -21,7 +22,7 @@ export default function HomePage() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   
   const navigate = useNavigate();
-  const myId = 1;
+  const myId = getMyId() ?? 0;
 
   useEffect(() => {
     http.get("/conversations/all")

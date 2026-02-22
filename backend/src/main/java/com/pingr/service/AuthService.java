@@ -11,6 +11,7 @@ import com.pingr.security.JwtService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -25,6 +26,7 @@ public class AuthService {
     private final UserAccountMapper userAccountMapper;
     private final JwtService jwtService;
 
+    @Transactional
     public AuthResponseDTO authenticate(LoginDTO loginDTO) {
         UserAccount userAccount = userAccountRepository.findByAccountEmail(loginDTO.getAccountEmail())
                 .filter(u -> passwordEncoder.matches(loginDTO.getPassword(), u.getAccountPassword()))
@@ -34,6 +36,7 @@ public class AuthService {
         return new AuthResponseDTO(userAccountDTO, token);
     }
 
+    @Transactional
     public AuthResponseDTO register(RegisterDTO registerDTO) {
         if (userAccountRepository.existsByAccountEmail(registerDTO.getAccountEmail())) {
             throw new SecurityException("This email address is already in use.");
