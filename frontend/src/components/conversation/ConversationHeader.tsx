@@ -34,12 +34,11 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
     const isGroup = selectedConv.conversationType === 'GROUP';
 
     const displayName = isGroup
-        ? others.map(p => p.accountName).join(", ")
+        ? (others.length > 0 ? others.map(p => p.accountName).join(", ") : "Groupe")
         : (others[0]?.accountName || "Utilisateur");
 
     const handleLeaveAction = async () => {
         if (!isGroup) return;
-
         if (!window.confirm("Voulez-vous vraiment quitter ce groupe ?")) return;
 
         try {
@@ -59,15 +58,11 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                 try {
                     const response = await http.get<UserSearchResult[]>(`/user/search?q=${searchQuery}`);
                     const filtered = response.data.filter(user =>
-                        !selectedConv.participants.some(p => p.accountId === user.accountId)
+                        !selectedConv.participants?.some(p => p.accountId === user.accountId)
                     );
                     setSearchResults(filtered);
-                } catch {
-                    setSearchResults([]);
-                }
-            } else {
-                setSearchResults([]);
-            }
+                } catch { setSearchResults([]); }
+            } else { setSearchResults([]); }
         }, 500);
         return () => clearTimeout(timer);
     }, [searchQuery, selectedConv.participants]);
@@ -75,8 +70,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as Node;
-            if (searchRef.current && !searchRef.current.contains(target) &&
-                resultsRef.current && !resultsRef.current.contains(target)) {
+            if (searchRef.current && !searchRef.current.contains(target)) {
                 setIsSearching(false);
                 setSearchQuery("");
             }
@@ -98,10 +92,12 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
 
                 {!isSearching ? (
                     <div className="min-w-0">
-                        <h3 className="font-bold text-sm sm:text-lg truncate text-white">{displayName}</h3>
+                        <h3 className="font-bold text-sm sm:text-lg truncate text-white text-left">{displayName}</h3>
                         <div className="flex items-center gap-2">
                             {isGroup ? (
-                                <span className="text-[10px] sm:text-xs text-gray-400 font-medium">{selectedConv.participants.length} membres</span>
+                                <span className="text-[10px] sm:text-xs text-gray-400 font-medium">
+                                    {(selectedConv.participants?.length || 0)} membres
+                                </span>
                             ) : (
                                 <>
                                     <span className="h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
@@ -116,13 +112,10 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                         <input
                             autoFocus
                             className="bg-transparent border-none outline-none text-white text-xs sm:text-sm w-32 sm:w-64"
-                            placeholder="Inviter..."
+                            placeholder="Inviter quelqu'un..."
                             value={searchQuery}
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
-                        <button onClick={() => { setIsSearching(false); setSearchQuery(""); }}>
-                            <X size={14} className="text-gray-400" />
-                        </button>
                     </div>
                 )}
             </div>
@@ -136,42 +129,38 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                 </button>
 
                 <div className="h-6 w-[1px] bg-[#2A2A2A] hidden sm:block"></div>
-                <button className="hover:text-white hidden sm:block"><Phone size={20} /></button>
-                <button className="hover:text-white hidden sm:block"><Video size={20} /></button>
+                <button className="hover:text-white hidden sm:block transition-colors"><Phone size={20} /></button>
+                <button className="hover:text-white hidden sm:block transition-colors"><Video size={20} /></button>
 
                 <div className="relative" ref={moreRef}>
                     <button
-                        onMouseDown={(e) => {
-                            e.preventDefault();
-                            setShowMore(!showMore);
-                        }}
-                        className={`p-2 rounded-full ${showMore ? 'text-white bg-white/10' : 'hover:text-white hover:bg-white/5'}`}
+                        onClick={() => setShowMore(!showMore)}
+                        className={`p-2 rounded-full transition-colors ${showMore ? 'text-white bg-white/10' : 'hover:text-white hover:bg-white/5'}`}
                     >
                         <MoreVertical size={20} />
                     </button>
 
                     {showMore && (
-                        <div className="absolute top-full right-0 mt-2 w-48 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden">
-                            <div className="p-2">
-                                <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-white/5 rounded-lg text-left">
-                                    <Search size={16} /> Rechercher
-                                </button>
+                        <div className="absolute top-full right-0 mt-2 w-52 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl z-50 overflow-hidden py-1">
+                            <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 text-left transition-colors">
+                                <Users size={16} /> Voir les membres
+                            </button>
 
-                                {isGroup && (
-                                    <>
-                                        <div className="h-[1px] bg-[#2A2A2A] my-1 mx-2"></div>
-                                        <button
-                                            onMouseDown={(e) => {
-                                                e.preventDefault();
-                                                handleLeaveAction();
-                                            }}
-                                            className="w-full flex items-center gap-3 px-3 py-2 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 rounded-lg text-left cursor-pointer"
-                                        >
-                                            <LogOut size={16} /> Quitter le groupe
-                                        </button>
-                                    </>
-                                )}
-                            </div>
+                            <button className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-gray-300 hover:bg-white/5 text-left transition-colors">
+                                <Search size={16} /> Rechercher dans le chat
+                            </button>
+
+                            {isGroup && (
+                                <>
+                                    <div className="h-[1px] bg-[#2A2A2A] my-1 mx-2"></div>
+                                    <button
+                                        onClick={handleLeaveAction}
+                                        className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 text-left font-medium transition-colors"
+                                    >
+                                        <LogOut size={16} /> Quitter le groupe
+                                    </button>
+                                </>
+                            )}
                         </div>
                     )}
                 </div>
@@ -179,7 +168,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
 
             {isSearching && searchQuery.length >= 2 && (
                 <div ref={resultsRef} className="absolute top-[75px] left-4 sm:left-8 w-64 sm:w-72 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl z-[9999] overflow-hidden">
-                    <div className="p-2">
+                    <div className="p-2 text-left">
                         {searchResults.length > 0 ? (
                             searchResults.map((user) => (
                                 <div
@@ -192,20 +181,20 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                                     }}
                                     className="flex items-center gap-3 p-3 hover:bg-[#2A2A2A] rounded-lg cursor-pointer group"
                                 >
-                                    <div className="h-8 w-8 rounded-full bg-[#2A2A2A] border border-[#3A3A3A] flex items-center justify-center text-xs text-[#EF3C56] font-bold group-hover:bg-[#EF3C56] group-hover:text-white">
+                                    <div className="h-8 w-8 rounded-full bg-[#2A2A2A] border border-[#3A3A3A] flex items-center justify-center text-xs text-[#EF3C56] font-bold group-hover:bg-[#EF3C56] group-hover:text-white transition-colors">
                                         {user.accountName?.charAt(0).toUpperCase() || "?"}
                                     </div>
-                                    <div className="flex flex-col min-w-0 text-left">
+                                    <div className="flex flex-col min-w-0">
                                         <span className="text-sm text-gray-200 group-hover:text-white flex items-center gap-1 truncate font-medium">
                                             {user.accountName}
                                             {user.role === 'ADMIN' && <ShieldCheck size={12} className="text-[#EF3C56]" />}
                                         </span>
-                                        <span className="text-[10px] text-gray-500">Ajouter</span>
+                                        <span className="text-[10px] text-gray-500">Cliquer pour inviter</span>
                                     </div>
                                 </div>
                             ))
                         ) : (
-                            <p className="p-4 text-center text-xs text-gray-500 italic">Aucun résultat</p>
+                            <p className="p-4 text-center text-xs text-gray-500 italic">Aucun utilisateur trouvé</p>
                         )}
                     </div>
                 </div>
