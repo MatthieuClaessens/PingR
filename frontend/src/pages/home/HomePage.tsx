@@ -86,7 +86,7 @@ export default function HomePage() {
                     >
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-xl bg-[#151515] border border-[#222] flex items-center justify-center text-[#EF3C56] font-bold text-xl">
-                          {user.username.charAt(0).toUpperCase()}
+                          {user.username ? user.username.charAt(0).toUpperCase() : "?"}
                         </div>
                         <div>
                           <h3 className="font-bold group-hover:text-white transition-colors">{user.username}</h3>

@@ -25,7 +25,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
     const [showMore, setShowMore] = useState(false);
     const [searchQuery, setSearchQuery] = useState("");
     const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
-    
+
     const searchRef = useRef<HTMLDivElement>(null);
     const resultsRef = useRef<HTMLDivElement>(null);
     const moreRef = useRef<HTMLDivElement>(null);
@@ -58,7 +58,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
             if (searchQuery.length >= 2) {
                 try {
                     const response = await http.get<UserSearchResult[]>(`/user/search?q=${searchQuery}`);
-                    const filtered = response.data.filter(user => 
+                    const filtered = response.data.filter(user =>
                         !selectedConv.participants.some(p => p.accountId === user.accountId)
                     );
                     setSearchResults(filtered);
@@ -75,7 +75,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
     useEffect(() => {
         const handleClickOutside = (e: MouseEvent) => {
             const target = e.target as Node;
-            if (searchRef.current && !searchRef.current.contains(target) && 
+            if (searchRef.current && !searchRef.current.contains(target) &&
                 resultsRef.current && !resultsRef.current.contains(target)) {
                 setIsSearching(false);
                 setSearchQuery("");
@@ -113,7 +113,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                 ) : (
                     <div ref={searchRef} className="flex items-center bg-[#2A2A2A] rounded-full px-3 py-1.5">
                         <Search size={14} className="text-gray-400 mr-2" />
-                        <input 
+                        <input
                             autoFocus
                             className="bg-transparent border-none outline-none text-white text-xs sm:text-sm w-32 sm:w-64"
                             placeholder="Inviter..."
@@ -128,19 +128,19 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
             </div>
 
             <div className="flex items-center gap-2 sm:gap-6 text-gray-400 shrink-0">
-                <button 
+                <button
                     onClick={() => setIsSearching(!isSearching)}
                     className={`p-2 rounded-full transition-all ${isSearching ? 'bg-[#EF3C56] text-white rotate-90' : 'hover:text-[#EF3C56] hover:bg-white/5'}`}
                 >
                     <UserPlus size={20} />
                 </button>
-                
+
                 <div className="h-6 w-[1px] bg-[#2A2A2A] hidden sm:block"></div>
                 <button className="hover:text-white hidden sm:block"><Phone size={20} /></button>
                 <button className="hover:text-white hidden sm:block"><Video size={20} /></button>
-                
+
                 <div className="relative" ref={moreRef}>
-                    <button 
+                    <button
                         onMouseDown={(e) => {
                             e.preventDefault();
                             setShowMore(!showMore);
@@ -156,11 +156,11 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                                 <button className="w-full flex items-center gap-3 px-3 py-2 text-sm text-gray-300 hover:bg-white/5 rounded-lg text-left">
                                     <Search size={16} /> Rechercher
                                 </button>
-                                
+
                                 {isGroup && (
                                     <>
                                         <div className="h-[1px] bg-[#2A2A2A] my-1 mx-2"></div>
-                                        <button 
+                                        <button
                                             onMouseDown={(e) => {
                                                 e.preventDefault();
                                                 handleLeaveAction();
@@ -182,7 +182,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                     <div className="p-2">
                         {searchResults.length > 0 ? (
                             searchResults.map((user) => (
-                                <div 
+                                <div
                                     key={user.accountId}
                                     onMouseDown={(e) => {
                                         e.preventDefault();
@@ -193,7 +193,7 @@ export const ConversationHeader: React.FC<ConversationHeaderProps> = ({ selected
                                     className="flex items-center gap-3 p-3 hover:bg-[#2A2A2A] rounded-lg cursor-pointer group"
                                 >
                                     <div className="h-8 w-8 rounded-full bg-[#2A2A2A] border border-[#3A3A3A] flex items-center justify-center text-xs text-[#EF3C56] font-bold group-hover:bg-[#EF3C56] group-hover:text-white">
-                                        {user.accountName.charAt(0).toUpperCase()}
+                                        {user.accountName?.charAt(0).toUpperCase() || "?"}
                                     </div>
                                     <div className="flex flex-col min-w-0 text-left">
                                         <span className="text-sm text-gray-200 group-hover:text-white flex items-center gap-1 truncate font-medium">

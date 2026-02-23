@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import { 
+import {
   Bell, Search, User, Menu,
-  ShieldCheck, MessageSquare, 
+  ShieldCheck, MessageSquare,
   Power
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -24,18 +24,18 @@ interface NavbarProps {
   onClearSearch?: () => void;
 }
 
-export const NavBar = ({ 
-  onSelectConv, 
-  onMenuClick, 
+export const NavBar = ({
+  onSelectConv,
+  onMenuClick,
   showMenuButton = false,
   onSearchResults,
-  onClearSearch 
+  onClearSearch
 }: NavbarProps) => {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchResults, setSearchResults] = useState<UserSearchResult[]>([]);
   const [showResults, setShowResults] = useState(false);
-  
+
   const navigate = useNavigate();
   const searchRef = useRef<HTMLDivElement>(null);
 
@@ -87,10 +87,10 @@ export const NavBar = ({
       const response = await http.post("/conversations", { accountIds: [targetId] });
       const conversation = response.data;
       const convId = conversation.conversationId || conversation.id;
-      
+
       setSearchQuery('');
       setShowResults(false);
-      
+
       navigate(`/conversation/${convId}`);
       if (onSelectConv) onSelectConv(convId);
     } catch (err) {
@@ -100,7 +100,7 @@ export const NavBar = ({
 
   return (
     <nav className="h-16 w-full bg-[#181818] border-b border-[#2A2A2A] flex items-center justify-between px-3 sm:px-6 relative z-50 gap-3">
-      
+
       <div className="flex items-center gap-2 shrink-0">
         {showMenuButton && (
           <button
@@ -110,9 +110,9 @@ export const NavBar = ({
             <Menu size={22} className="text-[#EEEEEE]" />
           </button>
         )}
-        
-        <h3 
-          onClick={() => navigate('/home')} 
+
+        <h3
+          onClick={() => navigate('/home')}
           className="font-['Salsa'] text-2xl sm:text-3xl text-[#EEEEEE] cursor-pointer hover:opacity-80 transition shrink-0"
         >
           Ping<span className="text-[#EF3C56]">R</span>
@@ -136,14 +136,14 @@ export const NavBar = ({
           <div className="absolute top-full left-0 right-0 mt-2 bg-[#181818] border border-[#2A2A2A] rounded-xl shadow-2xl overflow-hidden z-[60] animate-in fade-in slide-in-from-top-2 duration-200 w-[calc(100vw-2rem)] sm:w-full max-sm:-left-8">
             {searchResults.length > 0 ? (
               searchResults.map((user) => (
-                <div 
-                  key={user.accountId} 
+                <div
+                  key={user.accountId}
                   onClick={() => handleStartChat(user.accountId)}
                   className="flex items-center justify-between p-3 hover:bg-[#222222] cursor-pointer transition-colors border-b border-[#2A2A2A] last:border-0 group"
                 >
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-full bg-[#2A2A2A] border border-[#3A3A3A] flex items-center justify-center font-bold text-[#EF3C56] text-xs">
-                      {user.accountName.charAt(0).toUpperCase()}
+                      {user.accountName.charAt(0)}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-[#EEEEEE] flex items-center gap-2 truncate">
@@ -166,10 +166,10 @@ export const NavBar = ({
         <button className="p-2 text-[#979797] hover:text-[#EEEEEE] transition-colors hidden xs:block">
           <Bell size={20} />
         </button>
-        
+
         <div className="relative">
-          <button 
-            onClick={() => setIsProfileOpen(!isProfileOpen)} 
+          <button
+            onClick={() => setIsProfileOpen(!isProfileOpen)}
             className="w-9 h-9 rounded-full bg-[#2A2A2A] flex items-center justify-center border border-transparent hover:border-[#EF3C56]/50 transition-all active:scale-95 shadow-lg"
           >
             <User size={18} className="text-[#979797]" />
@@ -181,8 +181,8 @@ export const NavBar = ({
                 <p className="text-[10px] uppercase tracking-widest text-[#555555] font-bold">Session</p>
                 <p className="text-sm text-[#EEEEEE] font-medium truncate">Mon Compte</p>
               </div>
-              <button 
-                onClick={handleLogout} 
+              <button
+                onClick={handleLogout}
                 className="w-full flex items-center gap-3 px-4 py-3 text-sm text-[#EF3C56] hover:bg-[#EF3C56]/10 transition-colors text-left"
               >
                 <Power size={16} /> Déconnexion
