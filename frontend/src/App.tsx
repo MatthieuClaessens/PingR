@@ -14,10 +14,12 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const StaffRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuth = isAuthenticated();
   const user = getUserInfo();
+  console.log("DEBUG STAFF_ROUTE - User Object:", user);
+  console.log("DEBUG STAFF_ROUTE - Extracted Role:", user?.role);
   const role = user?.role?.toUpperCase();
 
   if (!isAuth) return <Navigate to="/" replace />;
-  
+
   if (role !== 'ADMIN' && role !== 'MODERATOR') {
     return <Navigate to="/home" replace />;
   }

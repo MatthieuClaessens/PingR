@@ -86,11 +86,10 @@ export default function HomePage() {
                     >
                       <div className="flex items-center gap-4">
                         <div className="h-12 w-12 rounded-xl bg-[#151515] border border-[#222] flex items-center justify-center text-[#EF3C56] font-bold text-xl">
-                          {user.username ? user.username.charAt(0).toUpperCase() : "?"}
+                          {user.username?.charAt(0).toUpperCase() || "?"}
                         </div>
                         <div>
-                          <h3 className="font-bold group-hover:text-white transition-colors">{user.username}</h3>
-                          <p className="text-xs text-[#555] font-mono lowercase">{user.email || 'user@pingr.app'}</p>
+                          <h3 className="font-bold group-hover:text-white transition-colors">{user.username || "Utilisateur inconnu"}</h3>
                         </div>
                       </div>
                       <ArrowUpRight size={18} className="text-[#333] group-hover:text-[#EF3C56] transition-all" />

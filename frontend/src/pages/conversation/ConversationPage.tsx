@@ -27,10 +27,14 @@ export default function ConversationPage() {
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const currentId = getMyId();
-    if (currentId) {
-      setMyId(Number(currentId));
-    }
+    const timer = setTimeout(() => {
+      const currentId = getMyId();
+      if (currentId) {
+        setMyId(Number(currentId));
+      }
+    }, 0);
+
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
