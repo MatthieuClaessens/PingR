@@ -7,7 +7,7 @@ import {
     ChevronLeft, ChevronRight, Users
 } from 'lucide-react';
 import {
-    Tooltip, ResponsiveContainer, PieChart, Pie, Cell,
+    Tooltip, ResponsiveContainer, PieChart, Pie, Legend, Cell,
     AreaChart, Area, CartesianGrid
 } from 'recharts';
 
@@ -70,8 +70,7 @@ export const DashboardPage = () => {
     ];
 
     return (
-        <div className="min-h-screen w-full bg-[#050505] text-[#EEEEEE] font-sans">
-            <NavBar />
+        <div className="fixed inset-0 w-full bg-[#050505] text-[#EEEEEE] font-sans overflow-y-auto overflow-x-hidden custom-scrollbar">            <NavBar />
 
             <div className="max-w-7xl mx-auto px-6 py-12 pb-32">
 
@@ -92,10 +91,39 @@ export const DashboardPage = () => {
                         <div className="h-[180px] w-full">
                             <ResponsiveContainer width="100%" height="100%">
                                 <PieChart>
-                                    <Pie data={roleStats} innerRadius={60} outerRadius={75} dataKey="value" nameKey="name" stroke="none" paddingAngle={4}>
+                                    <Pie
+                                        data={roleStats}
+                                        innerRadius={60}
+                                        outerRadius={75}
+                                        dataKey="value"
+                                        nameKey="name"
+                                        stroke="none"
+                                        paddingAngle={4}
+                                    >
                                         {roleStats.map((e, i) => <Cell key={i} fill={e.color} />)}
                                     </Pie>
-                                    <Tooltip contentStyle={{ backgroundColor: '#0D0D0D', border: '1px solid #222', borderRadius: '12px' }} />
+
+                                    <Tooltip
+                                        contentStyle={{
+                                            backgroundColor: '#0D0D0D',
+                                            border: '1px solid #222',
+                                            borderRadius: '12px',
+                                            padding: '8px'
+                                        }}
+                                        itemStyle={{ color: '#EEEEEE', textTransform: 'uppercase', fontSize: '12px', fontWeight: 'bold' }}
+                                        labelStyle={{ display: 'none' }}
+                                    />
+
+                                    <Legend
+                                        verticalAlign="bottom"
+                                        align="center"
+                                        iconType="circle"
+                                        formatter={(value, entry: any) => (
+                                            <span style={{ color: entry.color, fontSize: '10px', fontWeight: '800', textTransform: 'uppercase', marginLeft: '5px' }}>
+                                                {value}
+                                            </span>
+                                        )}
+                                    />
                                 </PieChart>
                             </ResponsiveContainer>
                         </div>
@@ -149,8 +177,8 @@ export const DashboardPage = () => {
 
                                             <td className="p-8">
                                                 <span className={`px-4 py-1.5 rounded-full border text-[9px] font-black ${u.role === 'ADMIN' ? 'border-[#EF3C56] text-[#EF3C56]' :
-                                                        u.role === 'MODERATOR' ? 'border-orange-500 text-orange-500' :
-                                                            'border-[#222] text-[#444]'
+                                                    u.role === 'MODERATOR' ? 'border-orange-500 text-orange-500' :
+                                                        'border-[#222] text-[#444]'
                                                     }`}>
                                                     {u.role}
                                                 </span>

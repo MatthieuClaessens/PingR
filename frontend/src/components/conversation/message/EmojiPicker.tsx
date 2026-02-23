@@ -49,7 +49,7 @@ export const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect }) => {
           }`}
         title="Ajouter un émoji"
       >
-        <Smile size={22} />
+        <Smile size={22} className="cursor-pointer" />
       </button>
 
       {isOpen && (
@@ -71,7 +71,7 @@ export const EmojiPicker: React.FC<EmojiPickerProps> = ({ onSelect }) => {
                       }}
                       className="text-xl p-1.5 hover:bg-[#EF3C56]/10 rounded-lg transition-all duration-200 hover:scale-125 active:scale-90 flex items-center justify-center"
                     >
-                      <span className="drop-shadow-sm">{emoji}</span>
+                      <span className="drop-shadow-sm cursor-pointer">{emoji}</span>
                     </button>
                   ))}
                 </div>
