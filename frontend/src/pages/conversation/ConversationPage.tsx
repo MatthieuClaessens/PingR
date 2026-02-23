@@ -9,8 +9,8 @@ import type { Conversation, AccountShortInfo } from "../../entities/conversation
 import http from "../../api/http-common";
 import { getMyId } from "../../services/authenticationService";
 import { NavBar } from "../../components/globals/NavBar";
-import { MessageBubble } from "../../components/conversation/MessageBubble";
-import { MessageInput } from "../../components/conversation/MessageInput";
+import { MessageBubble } from "../../components/conversation/message/MessageBubble";
+import { MessageInput } from "../../components/conversation/message/MessageInput";
 import { ConversationHeader } from "../../components/conversation/ConversationHeader";
 
 export default function ConversationPage() {

@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { MoreHorizontal, Edit2, Trash2, Check, X } from "lucide-react";
-import type { Message } from "../../entities/message";
+import type { Message } from "../../../entities/message";
 
 interface MessageBubbleProps {
     msg: Message;
