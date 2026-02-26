@@ -1,0 +1,206 @@
+Structure du dossier pour le volume Nouveau nom
+Le numéro de série du volume est B646-9617
+C:.
+|   .gitattributes
+|   .gitignore
+|   arbo-backend.txt
+|   HELP.md
+|   mvnw
+|   mvnw.cmd
+|   PingR.iml
+|   pom.xml
+|   
++---.idea
+|       .gitignore
+|       compiler.xml
+|       copilot.data.migration.agent.xml
+|       copilot.data.migration.ask.xml
+|       copilot.data.migration.ask2agent.xml
+|       copilot.data.migration.edit.xml
+|       encodings.xml
+|       jarRepositories.xml
+|       kotlinc.xml
+|       material_theme_project_new.xml
+|       misc.xml
+|       workspace.xml
+|       
++---.mvn
+|   \---wrapper
+|           maven-wrapper.properties
+|           
++---src
+|   +---main
+|   |   +---java
+|   |   |   \---com
+|   |   |       \---pingr
+|   |   |           |   PingRApplication.java
+|   |   |           |   
+|   |   |           +---config
+|   |   |           +---controller
+|   |   |           |       AuthController.java
+|   |   |           |       ConversationController.java
+|   |   |           |       MessageController.java
+|   |   |           |       UserAccountController.java
+|   |   |           |       
+|   |   |           +---dto
+|   |   |           |   |   ConversationDTO.java
+|   |   |           |   |   MessageDTO.java
+|   |   |           |   |   UserAccountDTO.java
+|   |   |           |   |   
+|   |   |           |   \---auth
+|   |   |           |           AuthResponseDTO.java
+|   |   |           |           ChangeMailDTO.java
+|   |   |           |           ChangePasswordDTO.java
+|   |   |           |           LoginDTO.java
+|   |   |           |           RegisterDTO.java
+|   |   |           |           
+|   |   |           +---entity
+|   |   |           |       Conversation.java
+|   |   |           |       ConversationType.java
+|   |   |           |       Message.java
+|   |   |           |       Role.java
+|   |   |           |       UserAccount.java
+|   |   |           |       
+|   |   |           +---exception
+|   |   |           |       GlobalExceptionHandler.java
+|   |   |           |       
+|   |   |           +---mapper
+|   |   |           |       ConversationMapper.java
+|   |   |           |       MessageMapper.java
+|   |   |           |       UserAccountMapper.java
+|   |   |           |       
+|   |   |           +---repository
+|   |   |           |       ConversationRepository.java
+|   |   |           |       MessageRepository.java
+|   |   |           |       UserAccountRepository.java
+|   |   |           |       
+|   |   |           +---security
+|   |   |           |       JwtAuthenticationFilter.java
+|   |   |           |       JwtService.java
+|   |   |           |       SecurityConfig.java
+|   |   |           |       
+|   |   |           +---service
+|   |   |           |       AuthService.java
+|   |   |           |       ConversationService.java
+|   |   |           |       MessageService.java
+|   |   |           |       UserAccountService.java
+|   |   |           |       
+|   |   |           \---test
+|   |   \---resources
+|   |       |   application.properties
+|   |       |   schema.sql
+|   |       |   
+|   |       +---static
+|   |       \---templates
+|   \---test
+|       +---java
+|       |   \---com
+|       |       \---pingr
+|       |           |   ConversationServiceTest.java
+|       |           |   PingRApplicationTests.java
+|       |           |   UserAccountServiceTest.java
+|       |           |   
+|       |           +---controller
+|       |           \---security
+|       \---resources
+\---target
+    |   pingr-backend-1.0.0.jar
+    |   pingr-backend-1.0.0.jar.original
+    |   
+    +---classes
+    |   |   application.properties
+    |   |   schema.sql
+    |   |   
+    |   \---com
+    |       \---pingr
+    |           |   PingRApplication.class
+    |           |   
+    |           +---config
+    |           +---controller
+    |           |       AuthController.class
+    |           |       ConversationController.class
+    |           |       MessageController.class
+    |           |       MessageRequest.class
+    |           |       UserAccountController.class
+    |           |       
+    |           +---dto
+    |           |   |   ConversationDTO$AccountShortInfo.class
+    |           |   |   ConversationDTO.class
+    |           |   |   MessageDTO.class
+    |           |   |   UserAccountDTO.class
+    |           |   |   
+    |           |   \---auth
+    |           |           AuthResponseDTO.class
+    |           |           ChangeMailDTO.class
+    |           |           ChangePasswordDTO.class
+    |           |           LoginDTO.class
+    |           |           RegisterDTO.class
+    |           |           
+    |           +---entity
+    |           |       Conversation.class
+    |           |       ConversationType.class
+    |           |       Message.class
+    |           |       Role.class
+    |           |       UserAccount.class
+    |           |       
+    |           +---exception
+    |           |       GlobalExceptionHandler.class
+    |           |       
+    |           +---mapper
+    |           |       ConversationMapper.class
+    |           |       MessageMapper.class
+    |           |       UserAccountMapper.class
+    |           |       
+    |           +---repository
+    |           |       ConversationRepository.class
+    |           |       MessageRepository.class
+    |           |       UserAccountRepository.class
+    |           |       
+    |           +---security
+    |           |       JwtAuthenticationFilter.class
+    |           |       JwtService.class
+    |           |       SecurityConfig.class
+    |           |       
+    |           +---service
+    |           |       AuthService.class
+    |           |       ConversationService.class
+    |           |       MessageService.class
+    |           |       UserAccountService.class
+    |           |       
+    |           \---test
+    +---generated-sources
+    |   \---annotations
+    +---generated-test-sources
+    |   \---test-annotations
+    +---maven-archiver
+    |       pom.properties
+    |       
+    +---maven-status
+    |   \---maven-compiler-plugin
+    |       +---compile
+    |       |   \---default-compile
+    |       |           createdFiles.lst
+    |       |           inputFiles.lst
+    |       |           
+    |       \---testCompile
+    |           \---default-testCompile
+    |                   createdFiles.lst
+    |                   inputFiles.lst
+    |                   
+    +---surefire-reports
+    |       com.pingr.ConversationServiceTest.txt
+    |       com.pingr.PingRApplicationTests.txt
+    |       com.pingr.UserAccountServiceTest.txt
+    |       TEST-com.pingr.ConversationServiceTest.xml
+    |       TEST-com.pingr.PingRApplicationTests.xml
+    |       TEST-com.pingr.UserAccountServiceTest.xml
+    |       
+    \---test-classes
+        \---com
+            \---pingr
+                |   ConversationServiceTest.class
+                |   PingRApplicationTests.class
+                |   UserAccountServiceTest.class
+                |   
+                +---controller
+                \---security
