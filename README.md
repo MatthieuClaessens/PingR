@@ -33,10 +33,19 @@
 | :--- | :--- |
 | <a href="https://i.ibb.co/N2s14bkG/Capture-d-cran-2026-02-17-001122.png" target="_blank"><img src="https://i.ibb.co/N2s14bkG/Capture-d-cran-2026-02-17-001122.png" alt="Figma Desktop"></a> | <a href="https://i.ibb.co/GvRrqj2t/Capture-d-cran-2026-02-17-000814.png" target="_blank"><img src="https://i.ibb.co/GvRrqj2t/Capture-d-cran-2026-02-17-000814.png" alt="Figma Architecture"></a> |
 
-### 📊 Database & Logic
-| Class Diagram (DTO Structure) | Conceptual Data Model (MCD) |
+### 🛠️ Software Architecture (UML)
+*Software architecture defines the interactions between users and system components.*
+
+| Use Case Diagram | Sequence Diagram | Class Diagram |
+| :--- | :--- | :--- |
+| <img src="https://i.ibb.co/nMBx4yGd/image.png" alt="Use Case"> | <img src="https://i.ibb.co/p63T1BmC/Capture-d-cran-2026-02-26-134239.png" alt="Sequence Diagram"> | <a href="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" target="_blank"><img src="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" alt="UML Class"></a> |
+
+### 📊 Persistence Layer (MERISE)
+*Database modeling, from conceptual to logical levels.*
+
+| Conceptual Data Model (MCD) | Logical Data Model (MLD) |
 | :--- | :--- |
-| <a href="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" target="_blank"><img src="https://i.ibb.co/NgbTyXsJ/Capture-d-cran-2026-02-17-001601.png" alt="UML Class"></a> | <a href="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" target="_blank"><img src="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" alt="MCD Schema"></a> |
+| <a href="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" target="_blank"><img src="https://i.ibb.co/cS2N4962/Capture-d-cran-2026-02-17-001358.png" alt="MCD Schema"></a> | <img src="https://i.ibb.co/jkKVFv5C/image.png" alt="MLD Schema"> |
 
 ---
 
@@ -59,7 +68,7 @@ The project follows a rigorous **N-Tier Architecture** to decouple concerns:
 
 ## 🌐 3. Network & Deployment Architecture (Docker)
 
-The infrastructure is fully containerized to ensure portability and environment parity. The inclusion of **Adminer** allows for streamlined database management during the development lifecycle.
+The infrastructure is fully containerized to ensure portability and environment parity.
 
 | Service | External Port | Internal Port | Role |
 | :--- | :--- | :--- | :--- |
