@@ -22,6 +22,10 @@
 
 > **💡 Engineering Decision:** To simulate real-time interaction, PingR implements a **Short Polling** strategy (5s cycles). This choice ensures Client/Server state consistency while operating on a standard, secure, and scalable REST API infrastructure.
 
+### 📄 Project Documentation
+For a comprehensive understanding of the project requirements, business logic, and architectural decisions, the full technical documentation is available in the repository:
+- [📂 View Technical Specifications & Requirements](/analyse)
+  
 ---
 
 ## 🎨 1. Design & Modeling (UML & MERISE)
