@@ -1,18 +1,18 @@
 <div align="center">
-  <div style="background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); padding: 50px 20px; border-radius: 15px; margin-bottom: 20px;">
-    <h1 style="color: white; margin: 0; font-size: 4em; font-family: sans-serif; letter-spacing: 4px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">PingR</h1>
-    <p style="color: rgba(255,255,255,0.9); margin-top: 10px; font-size: 1.4em; font-weight: 300;">RESTful Instant Messaging System</p>
-  </div>
+  <div style="background: linear-gradient(135deg, #00b4d8 0%, #0077b6 100%); padding: 50px 20px; border-radius: 15px; margin-bottom: 20px;">
+    <h1 style="color: white; margin: 0; font-size: 4em; font-family: sans-serif; letter-spacing: 4px; text-shadow: 2px 2px 4px rgba(0,0,0,0.3);">PingR</h1>
+    <p style="color: rgba(255,255,255,0.9); margin-top: 10px; font-size: 1.4em; font-weight: 300;">RESTful Instant Messaging System</p>
+  </div>
 
-  <h3>🚀 Software Engineering Capstone Project | Class of 2026</h3>
-  
-  <p>
-    <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" /> &nbsp;
-    <img src="https://img.shields.io/badge/Spring_Boot-3.5.7-6DB33F?style=for-the-badge&logo=springboot" /> &nbsp;
-    <img src="https://img.shields.io/badge/React-2026-61DAFB?style=for-the-badge&logo=react" /> &nbsp;
-    <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" /> &nbsp;
-    <img src="https://img.shields.io/badge/PostgreSQL-18.1-4169E1?style=for-the-badge&logo=postgresql" />
-  </p>
+  <h3>🚀 Software Engineering Capstone Project | Class of 2026</h3>
+  
+  <p>
+    <img src="https://img.shields.io/badge/Java-21-orange?style=for-the-badge&logo=java" /> &nbsp;
+    <img src="https://img.shields.io/badge/Spring_Boot-3.5.7-6DB33F?style=for-the-badge&logo=springboot" /> &nbsp;
+    <img src="https://img.shields.io/badge/React-2026-61DAFB?style=for-the-badge&logo=react" /> &nbsp;
+    <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker" /> &nbsp;
+    <img src="https://img.shields.io/badge/PostgreSQL-18.1-4169E1?style=for-the-badge&logo=postgresql" />
+  </p>
 </div>
 
 ---
@@ -22,15 +22,12 @@
 
 > **💡 Engineering Decision:** To simulate real-time interaction, PingR implements a **Short Polling** strategy (5s cycles). This choice ensures Client/Server state consistency while operating on a standard, secure, and scalable REST API infrastructure.
 
-### 📄 Project Documentation
-For a comprehensive understanding of the project requirements, business logic, and architectural decisions, the full technical documentation is available in the repository:
-- [📂 View Technical Specifications & Requirements](/analyse)
-  
+📋 **The complete functional specifications and system analysis are available in the [`/analyse`](./analyse) directory of this repository.**
+
 ---
 
 ## 🎨 1. Design & Modeling (UML & MERISE)
 
-> **Visual & Data Engineering**: A rigorous prototyping and modeling phase was conducted to ensure a seamless messaging experience and absolute data integrity.
 
 ### 🖋️ UI/UX Prototyping (Figma)
 | Desktop Interface Design | Component & User Flow Architecture |
@@ -86,7 +83,7 @@ The infrastructure is fully containerized to ensure portability and environment 
 ## ✅ 4. Quality Assurance & DevOps
 
 <a href="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" target="_blank">
-  <img src="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" alt="Unit Test Results">
+  <img src="https://i.ibb.co/d054x0hr/Capture-d-cran-2026-02-16-234149.png" alt="Unit Test Results">
 </a>
 
 > **Containerization:** The entire ecosystem is orchestrated via **Docker Compose**, ensuring "one-command" deployment and environment isolation.
@@ -97,7 +94,7 @@ The infrastructure is fully containerized to ensure portability and environment 
 
 ### 🌐 UI & Multidirectional Messaging
 <a href="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" target="_blank">
-  <img src="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" alt="Front-end Preview">
+  <img src="https://i.ibb.co/NdvBXXHj/Capture-d-cran-2026-02-16-234856.png" alt="Front-end Preview">
 </a>
 
 ### 🛡️ Authentication & Session Guard
@@ -120,3 +117,6 @@ cd PingR
 
 # Spin up the entire stack via Docker
 docker-compose up --build
+
+
+faudrait le mentionner dedans dcp
