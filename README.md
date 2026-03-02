@@ -117,6 +117,3 @@ cd PingR
 
 # Spin up the entire stack via Docker
 docker-compose up --build
-
-
-faudrait le mentionner dedans dcp
